@@ -11,8 +11,8 @@ An end-to-end explainable machine learning system that predicts an individual’
 ## Setup (Local)
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
-   cd <repo-name>
+   git clone https://github.com/KarikariSamuelZachary/xai-health-risk-system.git
+   cd xai-health-risk-system.git
 
 2. Install dependencies:
     ```bash
