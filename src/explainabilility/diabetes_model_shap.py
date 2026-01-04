@@ -28,9 +28,10 @@ model = joblib.load('../../output/diabetes_rf_model.joblib')
 # Standardize features (as in training)
 X_norm = scaler.transform(X)
 
+
 # Create SHAP explainer and values
 explainer = shap.Explainer(model, X_norm)
-shap_values = explainer(X_norm)
+shap_values = explainer(X_norm, check_additivity=False)
 
 # Summary plot (bar and beeswarm)
 shap.summary_plot(shap_values, X, plot_type='bar', show=False)
@@ -53,10 +54,22 @@ shap_values_sample = explainer(X_norm_sample)
 
 print(f'\nSHAP explanation for sample index {sample_idx}:')
 for feature, value, shap_val in zip(X_sample.columns, X_sample.iloc[0], shap_values_sample.values[0]):
+    # Convert shap_val to scalar if it's a numpy array
+    if isinstance(shap_val, np.ndarray):
+        if shap_val.size > 1:
+            shap_val = shap_val[1]
+        else:
+            shap_val = shap_val.item()
     print(f'{feature}: value={value}, SHAP contribution={shap_val:.4f}')
 
 # Visualize the SHAP force plot for this prediction
-force_plot = shap.plots.force(shap_values_sample[0], matplotlib=True, show=False, feature_names=X_sample.columns)
+if len(shap_values_sample.shape) == 3:
+    # For binary classification with 2 outputs, select the positive class (index 1)
+    shap_explanation = shap_values_sample[0, :, 1]
+else:
+    shap_explanation = shap_values_sample[0]
+
+force_plot = shap.plots.force(shap_explanation, matplotlib=True, show=False, feature_names=X_sample.columns)
 plt.tight_layout()
 plt.savefig('../../output/diabetes_shap_force_sample.png')
 plt.close()
