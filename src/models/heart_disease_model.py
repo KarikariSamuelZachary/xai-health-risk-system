@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 import joblib
 
 # Load processed data
-data = pd.read_csv('data/processed/heart_processed.csv')
+data = pd.read_csv('../../data/processed/heart_processed.csv')
 
 # Convert categorical columns if needed (adjust as per your notebook)
 categorical_cols = ['sex', 'fbs', 'exang', 'target', 'cp', 'restecg', 'slope', 'thal', 'ca']
@@ -29,5 +29,5 @@ lasso_lr = LogisticRegression(penalty='l1', max_iter=5000, C=0.1, solver='saga',
 lasso_lr.fit(X_train_norm, y_train)
 
 # Save model and scaler
-joblib.dump(lasso_lr, 'output/heart_disease_lasso_model.joblib')
-joblib.dump(scaler, 'output/heart_disease_scaler.joblib')
+joblib.dump(lasso_lr, '../../output/heart_disease_lasso_model.joblib')
+joblib.dump(scaler, '../../output/heart_disease_scaler.joblib')
