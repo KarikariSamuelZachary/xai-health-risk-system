@@ -1,6 +1,7 @@
 #!usr/bin/env python3
 import numpy as np
 import pandas as pd
+import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
@@ -46,6 +47,10 @@ def train_and_evaluate(df):
     print('Recall:', recall_score(y_test, y_pred_rf))
     print('F1 Score:', f1_score(y_test, y_pred_rf))
     print('Precision:', precision_score(y_test, y_pred_rf))
+
+    # Save model and scaler
+    joblib.dump(rf, '../../output/diabetes_rf_model.joblib')
+    joblib.dump(scaler, '../../output/diabetes_rf_scaler.joblib')
 
 if __name__ == "__main__":
     df = load_data("../../data/processed/diabetes_processed.csv")
