@@ -9,3 +9,7 @@ shap
 flask
 fastapi
 uvicorn
+pydantic
+pytest
+pytest-cov
+joblib
