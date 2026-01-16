@@ -16,7 +16,7 @@ class HeartDiseaseInput(BaseModel):
 	thal: int = Field(..., ge=0, le=3, description="Thalassemia (1–3, dataset encoded)")
 
 	class Config:
-		json_schema_extra = {
+		example = {
 			"example": {
 				"Age": 57,
 				"sex": 1,
