@@ -1,5 +1,6 @@
 import joblib
 import pandas as pd
+import numpy as np
 
 # Load artifacts once
 diabetes_model = joblib.load("output/diabetes_rf_model.joblib")
@@ -17,6 +18,11 @@ def predict_diabetes_risk(patient_data: dict) -> float:
     """
 
     df = pd.DataFrame([patient_data])
+
+    for col in ['Insulin', 'DiabetesPedigreeFunction', 'Age']:
+         if col in df.columns:
+             df[col] = np.log1p(df[col])
+             
     df = df.reindex(columns=DIABETES_FEATURES)
 
     X_scaled = diabetes_scaler.transform(df)
