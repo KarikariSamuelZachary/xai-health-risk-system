@@ -10,4 +10,3 @@ shap
 flask
 fastapi
 uvicorn
-joblib
