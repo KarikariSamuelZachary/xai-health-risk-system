@@ -6,10 +6,10 @@ seaborn
 scipy
 lightgbm
 shap
-flask
 fastapi
 uvicorn
 pydantic
 pytest
 pytest-cov
 joblib
+imbalanced-learn
