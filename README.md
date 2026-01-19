@@ -2,6 +2,8 @@
 
 An end-to-end **Explainable AI (XAI)** system designed to predict individual health risks for **Diabetes** and **Heart Disease**. This system goes beyond simple black-box predictions by providing transparent, human-interpretable explanations for every risk score generated, enabling trust and actionable insights for clinicians and users.
 
+The project features a **FastAPI** backend for high-performance inference and a modern **Next.js** frontend for an interactive user experience.
+
 ## 🚀 Key Features
 
 - **Multi-Disease Prediction**: 
@@ -10,6 +12,9 @@ An end-to-end **Explainable AI (XAI)** system designed to predict individual hea
 - **Explainable AI (XAI) Integration**: 
   - Uses **SHAP (SHapley Additive exPlanations)** to generate local feature importance for every prediction.
   - Translates complex mathematical attributions into natural language summaries (e.g., *"High risk driven by elevated Glucose and BMI..."*).
+- **Interactive Unified Dashboard**: 
+  - A modern web interface built with **Next.js** and **Tailwind CSS**.
+  - Visualizes risk levels, scores, and key contributing factors side-by-side.
 - **Unified Risk Service**: 
   - Aggregates multiple disease models into a single patient health profile.
   - Provides risk stratification (Low/Medium/High).
@@ -34,9 +39,15 @@ The project follows a modular MLOps structure:
 ```plaintext
 xai-health-risk-system/
 ├── data/                   # Raw and processed datasets
+├── frontend/               # Next.js Frontend Application
+│   ├── src/
+│   │   ├── app/            # App Router pages (Dashboard, etc.)
+│   │   └── components/     # Reusable UI components (Forms, RiskCards)
+│   ├── public/             # Static assets
+│   └── package.json        # Frontend dependencies
 ├── notebooks/              # Jupyter notebooks for EDA and training
 ├── output/                 # Trained models (.joblib) and scalers
-├── src/
+├── src/                    # Python Backend Source Code
 │   ├── cli/                # Command-line tools for quick testing
 │   ├── explainability/     # SHAP integration & text generation
 │   ├── models/             # Training scripts
@@ -44,41 +55,56 @@ xai-health-risk-system/
 │   ├── schemas/            # Pydantic models for API validation
 │   ├── services/           # Unified assessment logic
 │   └── main.py             # FastAPI application entry point
-└── requirements.txt        # Project dependencies
+└── requirements.txt        # Backend dependencies
 ```
 
 ## 🛠️ Installation
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/KarikariSamuelZachary/xai-health-risk-system.git
-    cd xai-health-risk-system
-    ```
+### 1. Clone the repository
+```bash
+git clone https://github.com/KarikariSamuelZachary/xai-health-risk-system.git
+cd xai-health-risk-system
+```
 
-2.  **Create a Virtual Environment (Optional but Recommended)**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
+### 2. Backend Setup
+Create a virtual environment and install Python dependencies.
 
-3.  **Install Dependencies**
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+python -m venv venv
+# Activate: source venv/bin/activate (Linux/Mac) or venv\Scripts\activate (Windows)
+pip install -r requirements.txt
+```
+
+### 3. Frontend Setup
+Navigate to the frontend directory and install Node dependencies.
+
+```bash
+cd frontend
+npm install
+```
 
 ## 💻 Usage
 
-### 1. Running the API Server
-Start the FastAPI server to handle requests locally.
+To run the full application, you need to start both the Backend (API) and the Frontend (UI) in separate terminals.
 
+### 1. Start the Backend API
+From the root project directory:
 ```bash
-cd src
-uvicorn main:app --reload
+uvicorn src.main:app --reload --app-dir src
 ```
-*   **API Docs**: Visit `http://127.0.0.1:8000/docs` to interact with the API endpoints.
+The API will run at **`http://localhost:8000`**.
+-   **Swagger Docs**: Visit `http://localhost:8000/docs`.
 
-### 2. Testing via CLI
-You can test the unified risk assessment logic directly from the terminal without running the server.
+### 2. Start the Frontend UI
+Open a new terminal, navigate to the `frontend` folder:
+```bash
+cd frontend
+npm run dev
+```
+The Dashboard will be accessible at **`http://localhost:3000`**.
+
+### 3. Testing via CLI (Backend Only)
+You can test the unified risk assessment logic directly from the terminal.
 
 ```bash
 python -m src.cli.unified_risk_test
@@ -95,11 +121,15 @@ python -m src.models.heart_disease_model
 
 ## 📊 Technologies Used
 
--   **Core**: Python 3.9+
--   **Machine Learning**: Scikit-Learn, NumPy, Pandas, Imbalanced-learn (SMOTE)
+### Backend & AI
+-   **Python**: FastAPI, Uvicorn, Pydantic
+-   **Machine Learning**: Scikit-Learn, NumPy, Pandas, SMOTE
 -   **Explainability**: SHAP (SHapley Additive exPlanations)
--   **API**: FastAPI, Uvicorn, Pydantic
--   **Serialization**: Joblib
+
+### Frontend
+-   **Framework**: Next.js 14+ (App Router), React
+-   **Styling**: Tailwind CSS
+-   **Networking**: Axios
 
 ## 📄 License
 
