@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.risk-gradient-high {
+  background: conic-gradient(from 180deg, #E65151 87%, #f3f4f6 0);
+}
+.risk-gradient-low {
+  background: conic-gradient(from 180deg, #3CB94D 12%, #f3f4f6 0);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

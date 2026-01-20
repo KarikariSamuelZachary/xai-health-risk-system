@@ -10,7 +10,7 @@ def stratify_risk(risk_score: float) -> str:
     """
     if risk_score < 0.3:
         return "Low"
-    elif risk_score < 0.7:
+    elif risk_score < 0.5:
         return "Moderate"
     else:
         return "High"
