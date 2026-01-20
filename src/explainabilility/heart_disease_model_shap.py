@@ -2,6 +2,7 @@
 import pandas as pd
 import joblib
 import shap
+import numpy as np
 
 # ---------- Load artifacts ----------
 DATA_PATH = 'data/processed/heart_processed.csv'
@@ -10,11 +11,11 @@ MODEL_PATH = 'output/heart_disease_lasso_model.joblib'
 
 data = pd.read_csv(DATA_PATH)
 
-categorical_cols = ['sex', 'fbs', 'exang', 'cp', 'restecg', 'slope', 'thal', 'ca']
-for col in categorical_cols:
-    data[col] = data[col].astype('category')
-
 X = data.drop('target', axis=1)
+
+# Apply same transformations as training
+X['oldpeak'] = np.log1p(X['oldpeak'])
+X['chol'] = np.log1p(X['chol'])
 
 scaler = joblib.load(SCALER_PATH)
 model = joblib.load(MODEL_PATH)
@@ -28,6 +29,11 @@ def explain_instance(input_df: pd.DataFrame):
     Returns SHAP Explanation object for one row
     """
     input_df = input_df.reindex(columns=X.columns)
+    
+    # Apply same transformations as training
+    input_df["oldpeak"] = np.log1p(input_df["oldpeak"])
+    input_df["chol"] = np.log1p(input_df["chol"])
+    
     X_norm_input = scaler.transform(input_df)
     return explainer(X_norm_input)[0]
 
