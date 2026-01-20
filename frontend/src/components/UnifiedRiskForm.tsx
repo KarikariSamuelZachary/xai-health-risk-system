@@ -80,7 +80,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8000/assess/unified', payload);
+      const response = await axios.post('https://xai-health-risk-system.onrender.com/assess/unified', payload);
       onResult(response.data);
     } catch (error) {
       console.error("API Error:", error);
