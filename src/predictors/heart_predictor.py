@@ -1,5 +1,6 @@
 import joblib
 import pandas as pd
+import numpy as np
 
 # Load artifacts once
 heart_model = joblib.load("output/heart_disease_lasso_model.joblib")
@@ -19,6 +20,10 @@ def predict_heart_risk(patient_data: dict) -> float:
 
     df = pd.DataFrame([patient_data])
     df = df.reindex(columns=HEART_FEATURES)
+
+    # Apply same transformations as training
+    df["oldpeak"] = np.log1p(df["oldpeak"])
+    df["chol"] = np.log1p(df["chol"])
 
     X_scaled = heart_scaler.transform(df)
 
