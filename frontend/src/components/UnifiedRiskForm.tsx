@@ -36,7 +36,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
     
     Pregnancies: '', BloodPressure: '', SkinThickness: '', Insulin: '', DiabetesPedigreeFunction: 0.5,
     
-    cp: 2, fbs: 0, exang: 0, oldpeak: 1.0, slope: 1, ca: '', thal: 2,
+    cp: 2, fbs: 0, exang: 0, oldpeak: 1.0, slope: 1, ca: 0, thal: 2,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -182,7 +182,12 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
             </div>
             <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase text-primary">Number of Major Vessels (ca)</label>
-                <input type="number" name="ca" value={formData.ca} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
+                <select name="ca" value={formData.ca} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                    <option value={0}>0</option>
+                    <option value={1}>1</option>
+                    <option value={2}>2</option>
+                    <option value={3}>3</option>
+                </select>
             </div>
              <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase text-primary">ST Segment Slope (slope)</label>
