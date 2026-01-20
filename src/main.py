@@ -23,7 +23,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://xai-health-risk-system-a1ecf2w4t.vercel.app"
+        "https://xai-health-risk-system.vercel.app",
+        "https://xai-health-risk-system-a1ecf2w4t.vercel.app",
+        "https://xai-health-risk-system-bgrlqf76w.vercel.app",
+        "https://*.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
