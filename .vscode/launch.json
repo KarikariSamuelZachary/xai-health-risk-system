@@ -1,27 +1,16 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        
-        {
-            "name": "Python Debugger: Current File",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Python: Current File",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Python: Diabetes Model Training",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/models/diabetes_model_training.py",
-            "console": "integratedTerminal"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run FastAPI (main.py)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/main.py",
+      "console": "integratedTerminal",
+      "env": {
+        "OUTPUT_DIR": "${workspaceFolder}/output",
+        "DATA_DIR": "${workspaceFolder}/data"
+      }
+    }
+  ]
 }
