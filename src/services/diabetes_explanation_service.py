@@ -1,6 +1,6 @@
 import pandas as pd
-from explainabilility.diabetes_model_shap import explain_instance, get_feature_names
-from explainabilility.explanation_generator import shap_to_natural_language
+from src.explainabilility.diabetes_model_shap import explain_instance, get_feature_names
+from src.explainabilility.explanation_generator import shap_to_natural_language
 
 def explain_diabetes_prediction(input_features: dict):
     input_df = pd.DataFrame([input_features])

@@ -1,6 +1,6 @@
 import pandas as pd
-from explainabilility.heart_disease_model_shap import explain_instance, get_feature_names
-from explainabilility.explanation_generator import shap_to_natural_language
+from src.explainabilility.heart_disease_model_shap import explain_instance, get_feature_names
+from src.explainabilility.explanation_generator import shap_to_natural_language
 
 def explain_heart_prediction(input_features: dict):
     input_df = pd.DataFrame([input_features])

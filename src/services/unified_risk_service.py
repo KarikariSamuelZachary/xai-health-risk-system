@@ -1,8 +1,8 @@
 from .health_explanation_service import explain_heart_prediction
 from .diabetes_explanation_service import explain_diabetes_prediction
-from predictors.heart_predictor import predict_heart_risk
-from predictors.diabetes_predictor import predict_diabetes_risk
-from utils.risk_stratification import stratify_risk
+from src.predictors.heart_predictor import predict_heart_risk
+from src.predictors.diabetes_predictor import predict_diabetes_risk
+from src.utils.risk_stratification import stratify_risk
 
 def unified_risk_assessment(patient_json):
     # --- Heart ---
