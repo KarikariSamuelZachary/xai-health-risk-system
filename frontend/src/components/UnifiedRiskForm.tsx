@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-// --- Helper Component for Accordion Sections ---
 const FormSection = ({ title, isOpen, onToggle, children }: { title: string, isOpen: boolean, onToggle: () => void, children: React.ReactNode }) => (
     <div className="border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden mb-3">
         <button
@@ -30,34 +29,58 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const [formData, setFormData] = useState({
-    // Vitals
-    age: 55, Age: 55, sex: 1, BMI: 28.5, Glucose: 100,
+  const [formData, setFormData] = useState<{ [key: string]: string | number }>({
+    age: '', sex: 1, BMI: '', Glucose: '',
     
-    // Cardio
-    trestbps: 130, chol: 240, thalach: 150, restecg: 1,
+    trestbps: '', chol: '', thalach: '', restecg: 1,
     
-    // Diabetes / Metabolic
-    Pregnancies: 1, BloodPressure: 72, SkinThickness: 30, Insulin: 100, DiabetesPedigreeFunction: 0.5,
+    Pregnancies: '', BloodPressure: '', SkinThickness: '', Insulin: '', DiabetesPedigreeFunction: 0.5,
     
-    // Clinical History
-    cp: 2, fbs: 0, exang: 0, oldpeak: 1.0, slope: 1, ca: 0, thal: 2,
+    cp: 2, fbs: 0, exang: 0, oldpeak: 1.0, slope: 1, ca: '', thal: 2,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (name === 'age') {
-        setFormData({ ...formData, age: Number(value), Age: Number(value) });
-    } else {
-        setFormData({ ...formData, [name]: Number(value) });
-    }
+    const isSelect = e.target.tagName === 'SELECT';
+    const newValue = isSelect ? Number(value) : value;
+
+    setFormData(prev => ({ ...prev, [name]: newValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    const payload = {
+        // Shared
+        Age: formData.age === '' ? 0 : Number(formData.age),
+        
+        // Heart Disease
+        sex: Number(formData.sex),
+        cp: Number(formData.cp),
+        trestbps: formData.trestbps === '' ? 0 : Number(formData.trestbps),
+        chol: formData.chol === '' ? 0 : Number(formData.chol),
+        fbs: Number(formData.fbs),
+        restecg: Number(formData.restecg),
+        thalach: formData.thalach === '' ? 0 : Number(formData.thalach),
+        exang: Number(formData.exang),
+        oldpeak: Number(formData.oldpeak),
+        slope: Number(formData.slope),
+        ca: formData.ca === '' ? 0 : Number(formData.ca),
+        thal: Number(formData.thal),
+
+        // Diabetes
+        Pregnancies: formData.Pregnancies === '' ? 0 : Number(formData.Pregnancies),
+        Glucose: formData.Glucose === '' ? 0 : Number(formData.Glucose),
+        BloodPressure: formData.BloodPressure === '' ? 0 : Number(formData.BloodPressure),
+        SkinThickness: formData.SkinThickness === '' ? 0 : Number(formData.SkinThickness),
+        Insulin: formData.Insulin === '' ? 0 : Number(formData.Insulin),
+        BMI: formData.BMI === '' ? 0 : Number(formData.BMI),
+        DiabetesPedigreeFunction: Number(formData.DiabetesPedigreeFunction),
+    };
+
     try {
-      const response = await axios.post('http://localhost:8000/assess/unified', formData);
+      const response = await axios.post('http://localhost:8000/assess/unified', payload);
       onResult(response.data);
     } catch (error) {
       console.error("API Error:", error);
@@ -85,11 +108,11 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
                 </select>
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-primary">BMI</label>
+                <label className="text-xs font-semibold uppercase text-primary">Body Mass Index (BMI)</label>
                 <input type="number" step="0.1" name="BMI" value={formData.BMI} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white" />
             </div>
              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-primary">Avg Glucose (mg/dL)</label>
+                <label className="text-xs font-semibold uppercase text-primary">Average Glucose Level (Glucose)</label>
                 <input type="number" name="Glucose" value={formData.Glucose} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white" />
             </div>
         </div>
@@ -97,19 +120,19 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
         {/* --- 2. CARDIOVASCULAR HEALTH (Examples: BP, Cholesterol) --- */}
         <FormSection title="Cardiovascular Metrics" isOpen={openSections.cardio} onToggle={() => toggleSection('cardio')}>
              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Systolic BP</label>
+                <label className="text-xs font-semibold uppercase text-primary">Resting Blood Pressure (trestbps)</label>
                 <input type="number" name="trestbps" value={formData.trestbps} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Cholesterol</label>
+                <label className="text-xs font-semibold uppercase text-primary">Serum Cholesterol (chol)</label>
                 <input type="number" name="chol" value={formData.chol} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Max Heart Rate</label>
+                <label className="text-xs font-semibold uppercase text-primary">Maximum Heart Rate (thalach)</label>
                 <input type="number" name="thalach" value={formData.thalach} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Exercise Angina</label>
+                <label className="text-xs font-semibold uppercase text-primary">Exercise Induced Angina (exang)</label>
                 <select name="exang" value={formData.exang} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value={0}>No</option>
                     <option value={1}>Yes</option>
@@ -120,19 +143,19 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
         {/* --- 3. METABOLIC & DIABETES INDICATORS --- */}
         <FormSection title="Metabolic & Diabetes Indicators" isOpen={openSections.diabetes} onToggle={() => toggleSection('diabetes')}>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Diastolic BP</label>
+                <label className="text-xs font-semibold uppercase text-primary">Diastolic Blood Pressure (BloodPressure)</label>
                 <input type="number" name="BloodPressure" value={formData.BloodPressure} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Insulin</label>
+                <label className="text-xs font-semibold uppercase text-primary">Serum Insulin (Insulin)</label>
                 <input type="number" name="Insulin" value={formData.Insulin} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Skin Thickness</label>
+                <label className="text-xs font-semibold uppercase text-primary">Triceps Skin Thickness (SkinThickness)</label>
                 <input type="number" name="SkinThickness" value={formData.SkinThickness} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Pregnancies</label>
+                <label className="text-xs font-semibold uppercase text-primary">Number of Pregnancies (Pregnancies)</label>
                 <input type="number" name="Pregnancies" value={formData.Pregnancies} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
         </FormSection>
@@ -140,7 +163,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
          {/* --- 4. ADVANCED CLINICAL HISTORY --- */}
          <FormSection title="Clinical History (ECG & Angiography)" isOpen={openSections.clinical} onToggle={() => toggleSection('clinical')}>
              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Chest Pain Type</label>
+                <label className="text-xs font-semibold uppercase text-primary">Chest Pain Type (cp)</label>
                 <select name="cp" value={formData.cp} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value={0}>Typical Angina</option>
                     <option value={1}>Atypical Angina</option>
@@ -149,19 +172,20 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
                 </select>
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Thalassemia</label>
+                <label className="text-xs font-semibold uppercase text-primary">Thalassemia (thal)</label>
                 <select name="thal" value={formData.thal} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value={0}>Unknown</option>
                     <option value={1}>Fixed Defect</option>
                     <option value={2}>Normal</option>
+                    <option value={3}>Reversible Defect</option>
                 </select>
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Major Vessels (0-3)</label>
+                <label className="text-xs font-semibold uppercase text-primary">Number of Major Vessels (ca)</label>
                 <input type="number" name="ca" value={formData.ca} onChange={handleChange} className="w-full p-2 border rounded text-sm" />
             </div>
              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">ST Slope</label>
+                <label className="text-xs font-semibold uppercase text-primary">ST Segment Slope (slope)</label>
                 <select name="slope" value={formData.slope} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value={0}>Upsloping</option>
                     <option value={1}>Flat</option>
