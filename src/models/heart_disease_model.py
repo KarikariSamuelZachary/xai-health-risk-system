@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -11,6 +12,10 @@ data = pd.read_csv('../../data/processed/heart_processed.csv')
 categorical_cols = ['sex', 'fbs', 'exang', 'target', 'cp', 'restecg', 'slope', 'thal', 'ca']
 for col in categorical_cols:
     data[col] = data[col].astype('category')
+
+# Apply same transformations as used in predictor
+data['oldpeak'] = np.log1p(data['oldpeak'])
+data['chol'] = np.log1p(data['chol'])
 
 # Split features and target
 X = data.drop('target', axis=1)
