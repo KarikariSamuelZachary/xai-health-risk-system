@@ -2,16 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from schemas.diabetes_schema import DiabetesInput, DiabetesResponse
-from schemas.heart_disease_schema import HeartDiseaseInput, HeartDiseaseResponse
-from schemas.unified_schema import UnifiedHealthInput, UnifiedHealthResponse
+from src.schemas.diabetes_schema import DiabetesInput, DiabetesResponse
+from src.schemas.heart_disease_schema import HeartDiseaseInput, HeartDiseaseResponse
+from src.schemas.unified_schema import UnifiedHealthInput, UnifiedHealthResponse
 
-from predictors.diabetes_predictor import predict_diabetes_risk
-from predictors.heart_predictor import predict_heart_risk
-from services.diabetes_explanation_service import explain_diabetes_prediction
-from services.health_explanation_service import explain_heart_prediction
-from services.unified_risk_service import unified_risk_assessment
-from utils.risk_stratification import stratify_risk
+from src.predictors.diabetes_predictor import predict_diabetes_risk
+from src.predictors.heart_predictor import predict_heart_risk
+from src.services.diabetes_explanation_service import explain_diabetes_prediction
+from src.services.health_explanation_service import explain_heart_prediction
+from src.services.unified_risk_service import unified_risk_assessment
+from src.utils.risk_stratification import stratify_risk
 
 app = FastAPI(
     title="XAI Health Risk System",
