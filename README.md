@@ -4,7 +4,7 @@ An end-to-end **Explainable AI (XAI)** system designed to predict individual hea
 
 The project features a **FastAPI** backend for high-performance inference and a modern **Next.js** frontend for an interactive user experience.
 
-## 🚀 Key Features
+## Key Features
 
 - **Multi-Disease Prediction**: 
   - **Diabetes**: Random Forest model optimized with class balancing (SMOTE) and log-transformations.
@@ -22,7 +22,7 @@ The project features a **FastAPI** backend for high-performance inference and a 
   - Built with **FastAPI** for high-performance, asynchronous inference.
   - Pydantic schemas for robust data validation.
 
-## 🏗️ System Architecture
+## System Architecture
 
 The project follows a modular MLOps structure:
 1.  **Data Science Lab (`notebooks/`)**: Interactive environment for EDA, feature engineering, and model training.
@@ -34,7 +34,7 @@ The project follows a modular MLOps structure:
     -   `services/`: Business logic orchestration.
 4.  **API Layer (`src/main.py`)**: REST API entry point.
 
-## 📁 Project Structure
+## Project Structure
 
 ```plaintext
 xai-health-risk-system/
@@ -58,7 +58,7 @@ xai-health-risk-system/
 └── requirements.txt        # Backend dependencies
 ```
 
-## 🛠️ Installation
+## Installation
 
 ### 1. Clone the repository
 ```bash
@@ -83,7 +83,7 @@ cd frontend
 npm install
 ```
 
-## 💻 Usage
+## Usage
 
 To run the full application, you need to start both the Backend (API) and the Frontend (UI) in separate terminals.
 
@@ -119,7 +119,7 @@ python -m src.models.diabetes_model_training
 python -m src.models.heart_disease_model
 ```
 
-## 📊 Technologies Used
+## Technologies Used
 
 ### Backend & AI
 -   **Python**: FastAPI, Uvicorn, Pydantic
@@ -131,6 +131,6 @@ python -m src.models.heart_disease_model
 -   **Styling**: Tailwind CSS
 -   **Networking**: Axios
 
-## 📄 License
+## License
 
 [MIT License](LICENSE)
