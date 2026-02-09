@@ -90,7 +90,7 @@ def explain_instance(input_df: pd.DataFrame):
     X_norm_input = scaler.transform(X_processed_input)
     
     # Get SHAP values
-    shap_exp = explainer(X_norm_input, check_additivity=False)
+    shap_exp = explainer(X_norm_input)
     
     # Handle binary classification output
     if shap_exp.values.ndim == 3:
