@@ -4,12 +4,15 @@ import uvicorn
 
 from src.schemas.diabetes_schema import DiabetesInput, DiabetesResponse
 from src.schemas.heart_disease_schema import HeartDiseaseInput, HeartDiseaseResponse
+from src.schemas.stroke_schema import StrokeInput, StrokeResponse
 from src.schemas.unified_schema import UnifiedHealthInput, UnifiedHealthResponse
 
 from src.predictors.diabetes_predictor import predict_diabetes_risk
 from src.predictors.heart_predictor import predict_heart_risk
+from src.predictors.stroke_predictor import predict_stroke_risk
 from src.services.diabetes_explanation_service import explain_diabetes_prediction
 from src.services.health_explanation_service import explain_heart_prediction
+from src.services.stroke_explanation_service import explain_stroke_prediction
 from src.services.unified_risk_service import unified_risk_assessment
 from src.utils.risk_stratification import stratify_risk
 
@@ -75,11 +78,34 @@ def assess_heart(patient: HeartDiseaseInput):
         "top_factors": explanations,
     }
 
+@app.post("/assess/stroke", response_model=StrokeResponse)
+def assess_stroke(patient: StrokeInput):
+    """
+    Assess stroke risk for a single patient.
+    """
+    data = patient.dict()
+    risk = float(predict_stroke_risk(data))
+    level = stratify_risk(risk)
+    explanations = explain_stroke_prediction(data)
+
+    summary = (
+        f"{level.capitalize()} stroke risk driven by "
+        f"{', '.join([f.split(' = ')[0] for f in explanations[:2]])}."
+    )
+
+    return {
+        "risk_score": round(risk, 2),
+        "risk_level": level,
+        "summary": summary,
+        "top_factors": explanations,
+    }
+
 @app.post("/assess/unified", response_model=UnifiedHealthResponse)
 def assess_patient_risk(patient: UnifiedHealthInput):
     """
-    Takes patient data, runs both risk models, and returns
-    risk scores + SHAP explanations.
+    Takes patient data, runs all applicable risk models, and returns
+    risk scores + SHAP explanations for each.
+    Only models with complete data will be executed.
     """
     data = patient.dict()
     return unified_risk_assessment(data)
