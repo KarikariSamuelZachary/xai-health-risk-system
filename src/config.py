@@ -11,3 +11,7 @@ DIABETES_SCALER_PATH = OUTPUT_DIR / "diabetes_rf_scaler.joblib"
 
 HEART_MODEL_PATH = OUTPUT_DIR / "heart_disease_lasso_model.joblib"
 HEART_SCALER_PATH = OUTPUT_DIR / "heart_disease_scaler.joblib"
+
+STROKE_MODEL_PATH = OUTPUT_DIR / "stroke_model.joblib"
+STROKE_SCALER_PATH = OUTPUT_DIR / "stroke_scaler.joblib"
+STROKE_ENCODER_PATH = OUTPUT_DIR / "stroke_encoder.joblib"
