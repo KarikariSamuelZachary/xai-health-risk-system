@@ -1,8 +1,13 @@
 from services.unified_risk_service import unified_risk_assessment
 
 patient = {
-    "age": 55,
-    "sex": 1,
+    # Shared fields
+    "Age": 55,
+    "BMI": 33.6,
+    "gender": "Male",
+    "Glucose": 148,
+
+    # Heart disease fields
     "cp": 2,
     "trestbps": 140,
     "chol": 250,
@@ -15,14 +20,19 @@ patient = {
     "ca": 0,
     "thal": 2,
 
+    # Diabetes fields
     "Pregnancies": 2,
-    "Glucose": 148,
     "BloodPressure": 72,
     "SkinThickness": 35,
     "Insulin": 168,
-    "BMI": 33.6,
     "DiabetesPedigreeFunction": 0.627,
-    "Age": 50
+
+    # Stroke fields
+    "hypertension": 0,
+    "ever_married": "Yes",
+    "work_type": "Private",
+    "smoking_status": "formerly smoked",
+    "diagnosed_heart_condition": False,
 }
 
 result = unified_risk_assessment(patient)
