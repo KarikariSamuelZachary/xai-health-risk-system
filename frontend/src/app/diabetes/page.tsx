@@ -25,7 +25,7 @@ export default function DiabetesAssessment() {
   const runAnalysis = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/assess/diabetes", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assess/diabetes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

@@ -30,7 +30,7 @@ export default function HeartDiseaseAssessment() {
   const runAnalysis = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/assess/heart", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assess/heart`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

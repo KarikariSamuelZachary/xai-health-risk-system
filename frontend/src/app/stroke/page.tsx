@@ -27,7 +27,7 @@ export default function StrokeAssessment() {
   const runAnalysis = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/assess/stroke", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assess/stroke`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
