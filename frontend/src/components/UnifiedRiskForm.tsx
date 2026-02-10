@@ -29,12 +29,12 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const [formData, setFormData] = useState<{ [key: string]: string | number | boolean }>({
-    age: '', gender: 'Male', BMI: '', Glucose: '',
+  const [formData, setFormData] = useState({
+    age: '' as string | number, gender: 'Male', BMI: '' as string | number, Glucose: '' as string | number,
     
-    trestbps: '', chol: '', thalach: '', restecg: 1,
+    trestbps: '' as string | number, chol: '' as string | number, thalach: '' as string | number, restecg: 1,
     
-    Pregnancies: '', BloodPressure: '', SkinThickness: '', Insulin: '', DiabetesPedigreeFunction: 0.5,
+    Pregnancies: '' as string | number, BloodPressure: '' as string | number, SkinThickness: '' as string | number, Insulin: '' as string | number, DiabetesPedigreeFunction: 0.5,
     
     cp: 2, fbs: 0, exang: 0, oldpeak: 1.0, slope: 1, ca: 0, thal: 2,
 
@@ -44,11 +44,13 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    const isCheckbox = type === 'checkbox';
-    const isSelect = e.target.tagName === 'SELECT';
-    const newValue = isCheckbox ? (e.target as HTMLInputElement).checked : isSelect ? (isNaN(Number(value)) ? value : Number(value)) : value;
-
-    setFormData(prev => ({ ...prev, [name]: newValue }));
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+    } else if (e.target.tagName === 'SELECT') {
+      setFormData(prev => ({ ...prev, [name]: isNaN(Number(value)) ? value : Number(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,7 +115,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
             </div>
             <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase text-primary">Gender</label>
-                <select name="gender" value={formData.gender as string} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white">
+                <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white">
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -215,21 +217,21 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
         <FormSection title="Stroke Risk Factors" isOpen={openSections.stroke} onToggle={() => toggleSection('stroke')}>
             <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase text-primary">Hypertension</label>
-                <select name="hypertension" value={formData.hypertension as number} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                <select name="hypertension" value={formData.hypertension} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value={0}>No</option>
                     <option value={1}>Yes</option>
                 </select>
             </div>
             <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase text-primary">Ever Married</label>
-                <select name="ever_married" value={formData.ever_married as string} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                <select name="ever_married" value={formData.ever_married} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                 </select>
             </div>
             <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase text-primary">Work Type</label>
-                <select name="work_type" value={formData.work_type as string} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                <select name="work_type" value={formData.work_type} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value="Private">Private</option>
                     <option value="Self-employed">Self-employed</option>
                     <option value="Govt_job">Government Job</option>
@@ -239,7 +241,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
             </div>
             <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase text-primary">Smoking Status</label>
-                <select name="smoking_status" value={formData.smoking_status as string} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                <select name="smoking_status" value={formData.smoking_status} onChange={handleChange} className="w-full p-2 border rounded text-sm">
                     <option value="formerly smoked">Formerly Smoked</option>
                     <option value="never smoked">Never Smoked</option>
                     <option value="smokes">Smokes</option>
@@ -250,7 +252,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
                 <input
                     type="checkbox"
                     name="diagnosed_heart_condition"
-                    checked={formData.diagnosed_heart_condition as boolean}
+                    checked={formData.diagnosed_heart_condition}
                     onChange={handleChange}
                     className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                 />
