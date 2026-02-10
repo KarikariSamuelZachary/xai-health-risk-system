@@ -74,7 +74,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
         exang: Number(formData.exang),
         oldpeak: Number(formData.oldpeak),
         slope: Number(formData.slope),
-        ca: formData.ca === '' ? 0 : Number(formData.ca),
+        ca: Number(formData.ca),
         thal: Number(formData.thal),
 
         // Diabetes
