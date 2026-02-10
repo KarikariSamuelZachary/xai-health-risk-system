@@ -14,6 +14,9 @@ export default function Home() {
   const defaultDiabetesInsights = [
     { icon: "info", color: "text-gray-400", text: "Submit form to see AI insights." }
   ];
+  const defaultStrokeInsights = [
+    { icon: "info", color: "text-gray-400", text: "Submit form to see AI insights." }
+  ];
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#0f151a] dark:text-gray-100 font-display min-h-screen flex flex-col">
@@ -60,6 +63,21 @@ export default function Home() {
                  color: "text-risk-moderate", 
                  text: f 
               })) : defaultDiabetesInsights}
+            />
+
+            {/* Stroke Card - Fixed Key: stroke */}
+            <RiskCard
+              title="Stroke Risk"
+              icon="neurology"
+              percent={results?.stroke?.risk_score ? Math.round(results.stroke.risk_score * 100) : 0}
+              riskLevel={results?.stroke ? results.stroke.risk_level : "Unknown"}
+              colorClass={results?.stroke?.risk_level === "High" ? "text-risk-high" : "text-risk-low"}
+              gradientClass={results?.stroke?.risk_level === "High" ? "risk-gradient-high" : "risk-gradient-low"}
+              insights={results?.stroke ? results.stroke.top_factors.map((f: string) => ({
+                 icon: "warning", 
+                 color: "text-risk-moderate", 
+                 text: f 
+              })) : defaultStrokeInsights}
             />
           </div>
         </div>
