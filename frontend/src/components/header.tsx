@@ -23,18 +23,24 @@ const Header: React.FC = () => {
           <Link className="text-primary text-sm font-semibold" href="/">
             Dashboard
           </Link>
-          <a 
-            className="text-[#537893] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors cursor-pointer" 
-            onClick={(e) => handleComingSoon(e, "Patient History")}
+          <Link 
+            className="text-[#537893] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors" 
+            href="/diabetes"
           >
-            Patient History
-          </a>
-          <a 
-            className="text-[#537893] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors cursor-pointer" 
-            onClick={(e) => handleComingSoon(e, "Settings")}
+            Diabetes
+          </Link>
+          <Link 
+            className="text-[#537893] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors" 
+            href="/heart-disease"
           >
-            Settings
-          </a>
+            Heart Disease
+          </Link>
+          <Link 
+            className="text-[#537893] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors" 
+            href="/stroke"
+          >
+            Stroke
+          </Link>
         </div>
         <div className="h-6 w-px bg-[#e8eef2] dark:bg-gray-700 mx-2"></div>
         <div className="flex items-center gap-3">
