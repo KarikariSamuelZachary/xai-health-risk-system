@@ -23,26 +23,30 @@ const FormSection = ({ title, isOpen, onToggle, children }: { title: string, isO
 
 const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
   const [loading, setLoading] = useState(false);
-  const [openSections, setOpenSections] = useState({ cardio: false, diabetes: false, clinical: false });
+  const [openSections, setOpenSections] = useState({ cardio: false, diabetes: false, clinical: false, stroke: false });
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const [formData, setFormData] = useState<{ [key: string]: string | number }>({
-    age: '', sex: 1, BMI: '', Glucose: '',
+  const [formData, setFormData] = useState<{ [key: string]: string | number | boolean }>({
+    age: '', gender: 'Male', BMI: '', Glucose: '',
     
     trestbps: '', chol: '', thalach: '', restecg: 1,
     
     Pregnancies: '', BloodPressure: '', SkinThickness: '', Insulin: '', DiabetesPedigreeFunction: 0.5,
     
     cp: 2, fbs: 0, exang: 0, oldpeak: 1.0, slope: 1, ca: 0, thal: 2,
+
+    hypertension: 0, ever_married: 'Yes', work_type: 'Private', smoking_status: 'never smoked',
+    diagnosed_heart_condition: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
     const isSelect = e.target.tagName === 'SELECT';
-    const newValue = isSelect ? Number(value) : value;
+    const newValue = isCheckbox ? (e.target as HTMLInputElement).checked : isSelect ? (isNaN(Number(value)) ? value : Number(value)) : value;
 
     setFormData(prev => ({ ...prev, [name]: newValue }));
   };
@@ -52,11 +56,13 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
     setLoading(true);
 
     const payload = {
-        // Shared
+        // Shared fields
         Age: formData.age === '' ? 0 : Number(formData.age),
+        gender: formData.gender,
+        Glucose: formData.Glucose === '' ? 0 : Number(formData.Glucose),
+        BMI: formData.BMI === '' ? 0 : Number(formData.BMI),
         
         // Heart Disease
-        sex: Number(formData.sex),
         cp: Number(formData.cp),
         trestbps: formData.trestbps === '' ? 0 : Number(formData.trestbps),
         chol: formData.chol === '' ? 0 : Number(formData.chol),
@@ -71,12 +77,17 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
 
         // Diabetes
         Pregnancies: formData.Pregnancies === '' ? 0 : Number(formData.Pregnancies),
-        Glucose: formData.Glucose === '' ? 0 : Number(formData.Glucose),
         BloodPressure: formData.BloodPressure === '' ? 0 : Number(formData.BloodPressure),
         SkinThickness: formData.SkinThickness === '' ? 0 : Number(formData.SkinThickness),
         Insulin: formData.Insulin === '' ? 0 : Number(formData.Insulin),
-        BMI: formData.BMI === '' ? 0 : Number(formData.BMI),
         DiabetesPedigreeFunction: Number(formData.DiabetesPedigreeFunction),
+
+        // Stroke
+        hypertension: Number(formData.hypertension),
+        ever_married: formData.ever_married,
+        work_type: formData.work_type,
+        smoking_status: formData.smoking_status,
+        diagnosed_heart_condition: Boolean(formData.diagnosed_heart_condition),
     };
 
     try {
@@ -101,10 +112,11 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
                 <input type="number" name="age" value={formData.age} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white focus:ring-1 focus:ring-primary" />
             </div>
             <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-primary">Sex</label>
-                <select name="sex" value={formData.sex} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white">
-                    <option value={1}>Male</option>
-                    <option value={0}>Female</option>
+                <label className="text-xs font-semibold uppercase text-primary">Gender</label>
+                <select name="gender" value={formData.gender as string} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
                 </select>
             </div>
             <div className="space-y-1">
@@ -112,7 +124,7 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
                 <input type="number" step="0.1" name="BMI" value={formData.BMI} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white" />
             </div>
              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase text-primary">Average Glucose Level (Glucose)</label>
+                <label className="text-xs font-semibold uppercase text-primary">Average Glucose Level (mg/dL)</label>
                 <input type="number" name="Glucose" value={formData.Glucose} onChange={handleChange} className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:text-white" />
             </div>
         </div>
@@ -196,6 +208,60 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
                     <option value={1}>Flat</option>
                     <option value={2}>Downsloping</option>
                 </select>
+            </div>
+        </FormSection>
+
+        {/* --- 5. STROKE RISK FACTORS --- */}
+        <FormSection title="Stroke Risk Factors" isOpen={openSections.stroke} onToggle={() => toggleSection('stroke')}>
+            <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase text-primary">Hypertension</label>
+                <select name="hypertension" value={formData.hypertension as number} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                    <option value={0}>No</option>
+                    <option value={1}>Yes</option>
+                </select>
+            </div>
+            <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase text-primary">Ever Married</label>
+                <select name="ever_married" value={formData.ever_married as string} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase text-primary">Work Type</label>
+                <select name="work_type" value={formData.work_type as string} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                    <option value="Private">Private</option>
+                    <option value="Self-employed">Self-employed</option>
+                    <option value="Govt_job">Government Job</option>
+                    <option value="children">Children</option>
+                    <option value="Never_worked">Never Worked</option>
+                </select>
+            </div>
+            <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase text-primary">Smoking Status</label>
+                <select name="smoking_status" value={formData.smoking_status as string} onChange={handleChange} className="w-full p-2 border rounded text-sm">
+                    <option value="formerly smoked">Formerly Smoked</option>
+                    <option value="never smoked">Never Smoked</option>
+                    <option value="smokes">Smokes</option>
+                    <option value="Unknown">Unknown</option>
+                </select>
+            </div>
+            <div className="md:col-span-2 flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+                <input
+                    type="checkbox"
+                    name="diagnosed_heart_condition"
+                    checked={formData.diagnosed_heart_condition as boolean}
+                    onChange={handleChange}
+                    className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                />
+                <div>
+                    <label className="text-sm font-semibold text-[#0f151a] dark:text-white cursor-pointer">
+                        Diagnosed Heart Condition
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        Check if you have a diagnosed heart condition. If unchecked, the heart disease prediction will be used for stroke assessment.
+                    </p>
+                </div>
             </div>
         </FormSection>
 
