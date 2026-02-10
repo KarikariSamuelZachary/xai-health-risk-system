@@ -1,6 +1,6 @@
 # XAI Health Risk Assessment System
 
-An end-to-end **Explainable AI (XAI)** system designed to predict individual health risks for **Diabetes** and **Heart Disease**. This system goes beyond simple black-box predictions by providing transparent, human-interpretable explanations for every risk score generated, enabling trust and actionable insights for clinicians and users.
+An end-to-end **Explainable AI (XAI)** system designed to predict individual health risks for **Diabetes**, **Heart Disease**, and **Stroke**. This system goes beyond simple black-box predictions by providing transparent, human-interpretable explanations for every risk score generated, enabling trust and actionable insights for clinicians and users.
 
 The project features a **FastAPI** backend for high-performance inference and a modern **Next.js** frontend for an interactive user experience.
 
@@ -9,18 +9,28 @@ The project features a **FastAPI** backend for high-performance inference and a 
 - **Multi-Disease Prediction**: 
   - **Diabetes**: Random Forest model optimized with class balancing (SMOTE) and log-transformations.
   - **Heart Disease**: Lasso-penalized Logistic Regression for sparse feature selection.
+  - **Stroke**: Lasso Logistic Regression with one-hot encoding for categorical features and SMOTE balancing.
+- **Unified Shared Fields**:
+  - Common patient data (Age, BMI, Gender, Glucose) is entered once and intelligently mapped to each model.
+  - Gender string is automatically converted to numeric sex for the heart disease model.
+  - Glucose level is shared between diabetes (as Glucose) and stroke (as avg_glucose_level).
+- **Smart Heart Disease Integration for Stroke**:
+  - An optional "Diagnosed Heart Condition" checkbox lets users self-report.
+  - If unchecked, the heart disease model prediction is used as input for stroke assessment.
 - **Explainable AI (XAI) Integration**: 
   - Uses **SHAP (SHapley Additive exPlanations)** to generate local feature importance for every prediction.
   - Translates complex mathematical attributions into natural language summaries (e.g., *"High risk driven by elevated Glucose and BMI..."*).
 - **Interactive Unified Dashboard**: 
   - A modern web interface built with **Next.js** and **Tailwind CSS**.
   - Visualizes risk levels, scores, and key contributing factors side-by-side.
+  - Standalone assessment pages for each condition (`/diabetes`, `/heart-disease`, `/stroke`).
 - **Unified Risk Service**: 
-  - Aggregates multiple disease models into a single patient health profile.
-  - Provides risk stratification (Low/Medium/High).
+  - Aggregates all three disease models into a single patient health profile.
+  - Provides risk stratification (Low/Moderate/High).
 - **Modern Backend Architecture**:
   - Built with **FastAPI** for high-performance, asynchronous inference.
   - Pydantic schemas for robust data validation.
+  - Environment-variable-based API configuration for easy local/production switching.
 
 ## System Architecture
 
@@ -39,21 +49,28 @@ The project follows a modular MLOps structure:
 ```plaintext
 xai-health-risk-system/
 ├── data/                   # Raw and processed datasets
+│   ├── raw/                # Original CSV files (diabetes, heart, stroke)
+│   └── processed/          # Cleaned datasets ready for training
 ├── frontend/               # Next.js Frontend Application
 │   ├── src/
-│   │   ├── app/            # App Router pages (Dashboard, etc.)
-│   │   └── components/     # Reusable UI components (Forms, RiskCards)
-│   ├── public/             # Static assets
+│   │   ├── app/            # App Router pages
+│   │   │   ├── page.tsx    # Unified Dashboard
+│   │   │   ├── diabetes/   # Standalone diabetes assessment
+│   │   │   ├── heart-disease/ # Standalone heart disease assessment
+│   │   │   └── stroke/     # Standalone stroke assessment
+│   │   └── components/     # Reusable UI (UnifiedRiskForm, RiskCard, Header)
+│   ├── .env.production     # Production API URL configuration
+│   ├── .env.example        # Environment variable template
 │   └── package.json        # Frontend dependencies
 ├── notebooks/              # Jupyter notebooks for EDA and training
-├── output/                 # Trained models (.joblib) and scalers
+├── output/                 # Trained models, scalers, encoders (.joblib)
 ├── src/                    # Python Backend Source Code
 │   ├── cli/                # Command-line tools for quick testing
 │   ├── explainability/     # SHAP integration & text generation
-│   ├── models/             # Training scripts
+│   ├── models/             # Training scripts (diabetes, heart, stroke)
 │   ├── predictors/         # Loading models & running inference
 │   ├── schemas/            # Pydantic models for API validation
-│   ├── services/           # Unified assessment logic
+│   ├── services/           # Unified assessment & explanation services
 │   └── main.py             # FastAPI application entry point
 └── requirements.txt        # Backend dependencies
 ```
@@ -115,21 +132,45 @@ To retrain the models, run the training scripts located in the `src` folder (ens
 
 ```bash
 python -m src.models.diabetes_model_training
-# or
 python -m src.models.heart_disease_model
+python -m src.models.stroke_model
 ```
+
+## API Endpoints
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/` | GET | Health check |
+| `/assess/diabetes` | POST | Standalone diabetes risk assessment |
+| `/assess/heart` | POST | Standalone heart disease risk assessment |
+| `/assess/stroke` | POST | Standalone stroke risk assessment |
+| `/assess/unified` | POST | Unified assessment for all three conditions |
+
+## Environment Variables
+
+### Frontend
+| Variable | Description | Example |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL | `http://localhost:8000` (dev) or `https://xai-health-risk-system.onrender.com` (prod) |
+
+See `frontend/.env.example` for a template.
 
 ## Technologies Used
 
 ### Backend & AI
 -   **Python**: FastAPI, Uvicorn, Pydantic
--   **Machine Learning**: Scikit-Learn, NumPy, Pandas, SMOTE
+-   **Machine Learning**: Scikit-Learn, NumPy, Pandas, SMOTE (imbalanced-learn)
 -   **Explainability**: SHAP (SHapley Additive exPlanations)
+-   **Serialization**: Joblib
 
 ### Frontend
 -   **Framework**: Next.js 14+ (App Router), React
 -   **Styling**: Tailwind CSS
 -   **Networking**: Axios
+
+### Deployment
+-   **Frontend**: Vercel
+-   **Backend**: Render
 
 ## License
 
