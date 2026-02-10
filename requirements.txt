@@ -1,15 +1,21 @@
+# Core ML & Data
 scikit-learn
-matplotlib
 numpy
 pandas
-seaborn
 scipy
-lightgbm
+joblib
+imbalanced-learn
 shap
+
+# Data Visualization (notebooks)
+matplotlib
+seaborn
+
+# Backend API
 fastapi
 uvicorn
 pydantic
+
+# Testing
 pytest
 pytest-cov
-joblib
-imbalanced-learn
