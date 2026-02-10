@@ -338,7 +338,7 @@ export default function StrokeAssessment() {
                   <span className="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-4">neurology</span>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Analysis Yet</h3>
                   <p className="text-slate-500 dark:text-slate-400">
-                    Enter patient data and click "Run Analysis" to see results
+                    Enter patient data and click &ldquo;Run Analysis&rdquo; to see results
                   </p>
                 </div>
               )}
