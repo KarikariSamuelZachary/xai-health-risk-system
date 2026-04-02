@@ -3,6 +3,24 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+export interface PredictionResponse {
+  risk_score: number;
+  patient_profile?: string;
+  explanations: string[];
+}
+
+export interface UnifiedAssessmentResponse {
+  diabetes?: PredictionResponse;
+  heart_disease?: PredictionResponse;
+  stroke?: PredictionResponse;
+}
+
+interface UnifiedRiskFormProps {
+  onResult: (data: UnifiedAssessmentResponse) => void;
+}
+
 const FormSection = ({ title, isOpen, onToggle, children }: { title: string, isOpen: boolean, onToggle: () => void, children: React.ReactNode }) => (
     <div className="border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden mb-3">
         <button
@@ -21,7 +39,21 @@ const FormSection = ({ title, isOpen, onToggle, children }: { title: string, isO
     </div>
 );
 
-const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
+const normalizePrediction = (
+  prediction?: PredictionResponse
+): PredictionResponse | undefined => {
+  if (!prediction) {
+    return undefined;
+  }
+
+  return {
+    risk_score: prediction.risk_score,
+    patient_profile: prediction.patient_profile,
+    explanations: Array.isArray(prediction.explanations) ? prediction.explanations : [],
+  };
+};
+
+const UnifiedRiskForm = ({ onResult }: UnifiedRiskFormProps) => {
   const [loading, setLoading] = useState(false);
   const [openSections, setOpenSections] = useState({ cardio: false, diabetes: false, clinical: false, stroke: false });
 
@@ -93,11 +125,19 @@ const UnifiedRiskForm = ({ onResult }: { onResult: (data: any) => void }) => {
     };
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/assess/unified`, payload);
-      onResult(response.data);
+      const response = await axios.post<UnifiedAssessmentResponse>(
+        `${API_BASE_URL}/assess/unified`,
+        payload
+      );
+
+      onResult({
+        diabetes: normalizePrediction(response.data.diabetes),
+        heart_disease: normalizePrediction(response.data.heart_disease),
+        stroke: normalizePrediction(response.data.stroke),
+      });
     } catch (error) {
       console.error("API Error:", error);
-      alert("Failed to fetch risk assessment.");
+      alert(`Failed to fetch risk assessment from ${API_BASE_URL}.`);
     } finally {
       setLoading(false);
     }
