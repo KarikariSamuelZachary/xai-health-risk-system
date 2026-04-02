@@ -2,15 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-.risk-gradient-high {
-  background: conic-gradient(from 180deg, #E65151 87%, #f3f4f6 0);
+@layer base {
+  body {
+    @apply bg-background-light text-slate-900 antialiased;
+  }
 }
-.risk-gradient-low {
-  background: conic-gradient(from 180deg, #3CB94D 12%, #f3f4f6 0);
+
+@layer components {
+  .clinical-panel {
+    @apply rounded-sm border border-border-soft bg-surface-light;
+  }
+
+  .clinical-section-heading {
+    @apply border-b border-border-soft px-5 py-4 text-sm font-semibold text-slate-800;
+  }
+
+  .clinical-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500;
+  }
+
+  .clinical-input {
+    @apply mt-1 h-10 w-full rounded-sm border border-border-soft bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-0;
+  }
+
+  .clinical-select {
+    @apply mt-1 h-10 w-full rounded-sm border border-border-soft bg-white px-3 text-sm text-slate-900 focus:border-primary focus:ring-0;
+  }
+
+  .clinical-button {
+    @apply inline-flex items-center justify-center rounded-sm border border-primary bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark;
+  }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #bcc7cf; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
