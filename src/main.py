@@ -7,14 +7,10 @@ from src.schemas.heart_disease_schema import HeartDiseaseInput, HeartDiseaseResp
 from src.schemas.stroke_schema import StrokeInput, StrokeResponse
 from src.schemas.unified_schema import UnifiedHealthInput, UnifiedHealthResponse
 
-from src.predictors.diabetes_predictor import predict_diabetes_risk
-from src.predictors.heart_predictor import predict_heart_risk
-from src.predictors.stroke_predictor import predict_stroke_risk
 from src.services.diabetes_explanation_service import explain_diabetes_prediction
 from src.services.health_explanation_service import explain_heart_prediction
 from src.services.stroke_explanation_service import explain_stroke_prediction
 from src.services.unified_risk_service import unified_risk_assessment
-from src.utils.risk_stratification import stratify_risk
 
 app = FastAPI(
     title="XAI Health Risk System",
@@ -42,63 +38,18 @@ def read_root():
 
 @app.post("/assess/diabetes", response_model=DiabetesResponse)
 def assess_diabetes(patient: DiabetesInput):
-    data = patient.dict()
-    risk = float(predict_diabetes_risk(data))
-    level = stratify_risk(risk)
-    explanations = explain_diabetes_prediction(data)
-
-    summary = (
-        f"{level.capitalize()} diabetes risk driven by "
-        f"{', '.join([f.split(' = ')[0] for f in explanations[:2]])}."
-    )
-
-    return {
-        "risk_score": round(risk, 2),
-        "risk_level": level,
-        "summary": summary,
-        "top_factors": explanations,
-    }
+    return explain_diabetes_prediction(patient.dict())
 
 @app.post("/assess/heart", response_model=HeartDiseaseResponse)
 def assess_heart(patient: HeartDiseaseInput):
-    data = patient.dict()
-    risk = float(predict_heart_risk(data))
-    level = stratify_risk(risk)
-    explanations = explain_heart_prediction(data)
-
-    summary = (
-        f"{level.capitalize()} heart disease risk driven by "
-        f"{', '.join([f.split(' = ')[0] for f in explanations[:2]])}."
-    )
-
-    return {
-        "risk_score": round(risk, 2),
-        "risk_level": level,
-        "summary": summary,
-        "top_factors": explanations,
-    }
+    return explain_heart_prediction(patient.dict())
 
 @app.post("/assess/stroke", response_model=StrokeResponse)
 def assess_stroke(patient: StrokeInput):
     """
     Assess stroke risk for a single patient.
     """
-    data = patient.dict()
-    risk = float(predict_stroke_risk(data))
-    level = stratify_risk(risk)
-    explanations = explain_stroke_prediction(data)
-
-    summary = (
-        f"{level.capitalize()} stroke risk driven by "
-        f"{', '.join([f.split(' = ')[0] for f in explanations[:2]])}."
-    )
-
-    return {
-        "risk_score": round(risk, 2),
-        "risk_level": level,
-        "summary": summary,
-        "top_factors": explanations,
-    }
+    return explain_stroke_prediction(patient.dict())
 
 @app.post("/assess/unified", response_model=UnifiedHealthResponse)
 def assess_patient_risk(patient: UnifiedHealthInput):
