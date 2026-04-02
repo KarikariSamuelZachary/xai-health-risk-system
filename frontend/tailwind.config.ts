@@ -10,18 +10,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#1f72ad",
-        "primary-dark": "#165a8a",
-        "background-light": "#f9fafa",
+        primary: "#566978",
+        "primary-dark": "#445866",
+        "background-light": "#f3f5f6",
         "background-dark": "#1a1f23",
         "surface-light": "#ffffff",
+        "surface-muted": "#f7f8f9",
         "surface-dark": "#242a30",
-        "risk-low": "#3CB94D",
-        "risk-moderate": "#FFCA2C",
-        "risk-high": "#E65151",
+        "border-soft": "#d7dde2",
+        "risk-low": "#6f8576",
+        "risk-moderate": "#b28957",
+        "risk-high": "#8c6262",
       },
       fontFamily: {
-        display: ["Inter", "sans-serif"],
+        display: ["Manrope", "system-ui", "sans-serif"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -31,7 +33,7 @@ const config: Config = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'), 
+    require('@tailwindcss/forms'),
   ],
 };
 export default config;
