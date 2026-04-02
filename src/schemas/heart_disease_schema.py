@@ -39,6 +39,5 @@ class HeartDiseaseResponse(BaseModel):
 	"""Standardized response for heart disease risk predictions."""
 
 	risk_score: float
-	risk_level: str
-	summary: str
-	top_factors: list[str]
+	patient_profile: str
+	explanations: list[str]
