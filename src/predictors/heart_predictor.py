@@ -5,6 +5,7 @@ import numpy as np
 # Load artifacts once
 heart_model = joblib.load("output/heart_disease_lasso_model.joblib")
 heart_scaler = joblib.load("output/heart_disease_scaler.joblib")
+heart_cluster_model = joblib.load("output/heart_cluster_model.joblib")
 
 # Must match training order exactly
 HEART_FEATURES = [
@@ -13,7 +14,15 @@ HEART_FEATURES = [
     "slope", "ca", "thal"
 ]
 
-def predict_heart_risk(patient_data: dict) -> float:
+CLUSTER_PROFILES = {
+    2: "Younger / Baseline Profile",
+    1: "Advanced Coronary Risk Profile",
+    3: "Metabolic / High Blood Sugar Profile",
+    0: "Atypical Presentation / High Cholesterol Profile"
+}
+
+
+def predict_heart_risk(patient_data: dict) -> dict:
     """
     Returns probability of heart disease
     """
@@ -28,5 +37,11 @@ def predict_heart_risk(patient_data: dict) -> float:
     X_scaled = heart_scaler.transform(df)
 
     probability = heart_model.predict_proba(X_scaled)[0][1]
+    cluster_id = int(heart_cluster_model.predict(X_scaled)[0])
+    profile_name = CLUSTER_PROFILES.get(cluster_id, "Unknown Profile")
 
-    return probability
+    return {
+        "probability": float(probability),
+        "cluster_id": cluster_id,
+        "profile_name": profile_name
+    }
