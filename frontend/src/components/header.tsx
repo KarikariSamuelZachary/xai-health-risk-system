@@ -11,10 +11,10 @@ const Header: React.FC = () => {
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e8eef2] dark:border-gray-700 bg-surface-light dark:bg-surface-dark px-6 md:px-10 py-3 sticky top-0 z-50">
       <div className="flex items-center gap-4 text-primary">
         <div className="size-8 flex items-center justify-center bg-primary/10 rounded-lg text-primary">
-          <span className="material-symbols-outlined text-2xl">health_and_safety</span>
+          <span className="text-sm font-bold uppercase tracking-[0.18em]">CR</span>
         </div>
         <h2 className="text-[#0f151a] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
-          XAI Health Risk System
+          Clinical Risk Assessment Platform
         </h2>
       </div>
 
@@ -52,13 +52,13 @@ const Header: React.FC = () => {
               <p className="text-xs font-semibold text-[#0f151a] dark:text-white">Guest User</p>
             </div>
             <div className="size-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full text-[#537893] ring-1 ring-gray-200 dark:ring-gray-700">
-                <span className="material-symbols-outlined text-2xl">account_circle</span>
+                <span className="text-xs font-bold uppercase tracking-[0.16em]">GU</span>
             </div>
           </div>
         </div>
       </div>
       <button className="md:hidden p-2 text-[#537893] dark:text-gray-300">
-        <span className="material-symbols-outlined">menu</span>
+        <span className="text-xs font-bold uppercase tracking-[0.16em]">Menu</span>
       </button>
     </header>
   );
