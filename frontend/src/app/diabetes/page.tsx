@@ -3,46 +3,84 @@
 import React, { useState } from "react";
 import Header from "@/components/header";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+interface AnalysisResponse {
+  risk_score: number;
+  patient_profile?: string;
+  explanations: string[];
+}
+
+const getRiskLevel = (riskScore?: number) => {
+  if (riskScore === undefined) {
+    return "Unknown";
+  }
+
+  if (riskScore < 0.3) {
+    return "Low";
+  }
+
+  if (riskScore < 0.5) {
+    return "Moderate";
+  }
+
+  return "High";
+};
+
 export default function DiabetesAssessment() {
   const [formData, setFormData] = useState({
     Pregnancies: 2,
-    Glucose: 168,
-    BloodPressure: 85,
-    SkinThickness: 35,
-    Insulin: 155,
-    BMI: 32.4,
-    DiabetesPedigreeFunction: 0.627,
-    Age: 50,
+    Glucose: '' as string | number,
+    BloodPressure: '' as string | number,
+    SkinThickness: '' as string | number,
+    Insulin: '' as string | number,
+    BMI: '' as string | number,
+    DiabetesPedigreeFunction: '' as string | number,
+    Age: '' as string | number,
   });
 
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (field: string, value: number) => {
+  const handleInputChange = (field: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const runAnalysis = async () => {
+    const hasEmptyField = Object.entries(formData).some(
+      ([key, value]) => key !== "Pregnancies" && value === ""
+    );
+
+    if (hasEmptyField) {
+      alert("Please fill in all fields before running analysis.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assess/diabetes`, {
+      const response = await fetch(`${API_BASE_URL}/assess/diabetes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const data: AnalysisResponse = await response.json();
       setResult(data);
     } catch (error) {
       console.error("Error running analysis:", error);
-      alert("Failed to run analysis. Make sure the backend is running.");
+      alert(`Failed to run analysis. Check that the backend is running at ${API_BASE_URL}.`);
     } finally {
       setLoading(false);
     }
   };
 
   const riskScore = result?.risk_score ? result.risk_score * 100 : 0;
-  const riskLevel = result?.risk_level || "Unknown";
-  const riskColor = riskLevel === "high" ? "#e65151" : riskLevel === "moderate" ? "#f59e0b" : "#10b981";
+  const riskLevel = getRiskLevel(result?.risk_score);
+  const riskColor = riskLevel === "High" ? "#e65151" : riskLevel === "Moderate" ? "#f59e0b" : "#10b981";
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex flex-col font-display">
@@ -92,7 +130,7 @@ export default function DiabetesAssessment() {
                     <input
                       type="number"
                       value={formData.Glucose}
-                      onChange={(e) => handleInputChange("Glucose", parseFloat(e.target.value))}
+                      onChange={(e) => handleInputChange("Glucose", e.target.value === "" ? "" : parseFloat(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -107,7 +145,7 @@ export default function DiabetesAssessment() {
                       type="number"
                       step="0.1"
                       value={formData.BMI}
-                      onChange={(e) => handleInputChange("BMI", parseFloat(e.target.value))}
+                      onChange={(e) => handleInputChange("BMI", e.target.value === "" ? "" : parseFloat(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -121,7 +159,7 @@ export default function DiabetesAssessment() {
                     <input
                       type="number"
                       value={formData.Insulin}
-                      onChange={(e) => handleInputChange("Insulin", parseFloat(e.target.value))}
+                      onChange={(e) => handleInputChange("Insulin", e.target.value === "" ? "" : parseFloat(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -135,7 +173,7 @@ export default function DiabetesAssessment() {
                     <input
                       type="number"
                       value={formData.BloodPressure}
-                      onChange={(e) => handleInputChange("BloodPressure", parseFloat(e.target.value))}
+                      onChange={(e) => handleInputChange("BloodPressure", e.target.value === "" ? "" : parseFloat(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -149,7 +187,7 @@ export default function DiabetesAssessment() {
                     <input
                       type="number"
                       value={formData.SkinThickness}
-                      onChange={(e) => handleInputChange("SkinThickness", parseFloat(e.target.value))}
+                      onChange={(e) => handleInputChange("SkinThickness", e.target.value === "" ? "" : parseFloat(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -163,7 +201,7 @@ export default function DiabetesAssessment() {
                     <input
                       type="number"
                       value={formData.Age}
-                      onChange={(e) => handleInputChange("Age", parseInt(e.target.value))}
+                      onChange={(e) => handleInputChange("Age", e.target.value === "" ? "" : parseInt(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -199,7 +237,7 @@ export default function DiabetesAssessment() {
                       type="number"
                       step="0.001"
                       value={formData.DiabetesPedigreeFunction}
-                      onChange={(e) => handleInputChange("DiabetesPedigreeFunction", parseFloat(e.target.value))}
+                      onChange={(e) => handleInputChange("DiabetesPedigreeFunction", e.target.value === "" ? "" : parseFloat(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -251,9 +289,11 @@ export default function DiabetesAssessment() {
                         </div>
                       </div>
 
-                      <p className="text-center text-sm text-slate-500 dark:text-slate-400 px-4">
-                        {result.summary}
-                      </p>
+                      {result.patient_profile && (
+                        <div className="rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-center text-sm font-semibold text-primary dark:border-primary/30 dark:bg-primary/15">
+                          Patient Profile: {result.patient_profile}
+                        </div>
+                      )}
                     </div>
 
                     {/* Explainable AI (XAI) Breakdown */}
@@ -261,12 +301,12 @@ export default function DiabetesAssessment() {
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                           <span className="material-symbols-outlined text-primary">lightbulb</span>
-                          Key Contributing Factors
+                          AI Risk Analysis
                         </h3>
                       </div>
 
                       <div className="flex flex-col gap-6">
-                        {result.top_factors?.slice(0, 5).map((factor: string, index: number) => {
+                        {result.explanations?.slice(0, 5).map((factor: string, index: number) => {
                           const percentage = Math.max(20, 85 - index * 15);
                           const impact = index === 0 ? "Critical Impact" : index === 1 ? "High Impact" : "Moderate Impact";
                           const impactColor = index === 0 ? "bg-risk-high" : index === 1 ? "bg-risk-medium" : "bg-slate-400";
@@ -302,9 +342,9 @@ export default function DiabetesAssessment() {
                     <div>
                       <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1">Clinical Recommendation</h4>
                       <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                        {riskLevel === "high"
+                        {riskLevel === "High"
                           ? "Immediate consultation recommended for glycemic control. Consider HbA1c test confirmation."
-                          : riskLevel === "moderate"
+                          : riskLevel === "Moderate"
                           ? "Regular monitoring recommended. Lifestyle modifications may help reduce risk."
                           : "Continue regular health checkups. Maintain healthy lifestyle choices."}
                       </p>
