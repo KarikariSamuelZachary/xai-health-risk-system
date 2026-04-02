@@ -3,51 +3,87 @@
 import React, { useState } from "react";
 import Header from "@/components/header";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+interface AnalysisResponse {
+  risk_score: number;
+  patient_profile?: string;
+  explanations: string[];
+}
+
+const getRiskLevel = (riskScore?: number) => {
+  if (riskScore === undefined) {
+    return "Unknown";
+  }
+
+  if (riskScore < 0.3) {
+    return "Low";
+  }
+
+  if (riskScore < 0.5) {
+    return "Moderate";
+  }
+
+  return "High";
+};
+
 export default function HeartDiseaseAssessment() {
   const [formData, setFormData] = useState({
-    Age: 57,
+    Age: '' as string | number,
     sex: 1,
     cp: 2,
-    trestbps: 130,
-    chol: 250,
+    trestbps: '' as string | number,
+    chol: '' as string | number,
     fbs: 0,
     restecg: 1,
-    thalach: 165,
+    thalach: '' as string | number,
     exang: 0,
-    oldpeak: 1.0,
+    oldpeak: '' as string | number,
     slope: 2,
-    ca: 0,
+    ca: '' as string | number,
     thal: 2,
   });
 
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (field: string, value: number) => {
+  const handleInputChange = (field: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const runAnalysis = async () => {
+    const hasEmptyField = Object.values(formData).some((value) => value === "");
+
+    if (hasEmptyField) {
+      alert("Please fill in all fields before running analysis.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/assess/heart`, {
+      const response = await fetch(`${API_BASE_URL}/assess/heart`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const data: AnalysisResponse = await response.json();
       setResult(data);
     } catch (error) {
       console.error("Error running analysis:", error);
-      alert("Failed to run analysis. Make sure the backend is running.");
+      alert(`Failed to run analysis. Check that the backend is running at ${API_BASE_URL}.`);
     } finally {
       setLoading(false);
     }
   };
 
   const riskScore = result?.risk_score ? result.risk_score * 100 : 0;
-  const riskLevel = result?.risk_level || "Unknown";
-  const riskColor = riskLevel === "high" ? "#e65151" : riskLevel === "moderate" ? "#f59e0b" : "#10b981";
+  const riskLevel = getRiskLevel(result?.risk_score);
+  const riskColor = riskLevel === "High" ? "#e65151" : riskLevel === "Moderate" ? "#f59e0b" : "#10b981";
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex flex-col font-display">
@@ -97,7 +133,7 @@ export default function HeartDiseaseAssessment() {
                     <input
                       type="number"
                       value={formData.Age}
-                      onChange={(e) => handleInputChange("Age", parseInt(e.target.value))}
+                      onChange={(e) => handleInputChange("Age", e.target.value === "" ? "" : parseInt(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -139,7 +175,7 @@ export default function HeartDiseaseAssessment() {
                     <input
                       type="number"
                       value={formData.trestbps}
-                      onChange={(e) => handleInputChange("trestbps", parseInt(e.target.value))}
+                      onChange={(e) => handleInputChange("trestbps", e.target.value === "" ? "" : parseInt(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -153,7 +189,7 @@ export default function HeartDiseaseAssessment() {
                     <input
                       type="number"
                       value={formData.chol}
-                      onChange={(e) => handleInputChange("chol", parseInt(e.target.value))}
+                      onChange={(e) => handleInputChange("chol", e.target.value === "" ? "" : parseInt(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -194,7 +230,7 @@ export default function HeartDiseaseAssessment() {
                     <input
                       type="number"
                       value={formData.thalach}
-                      onChange={(e) => handleInputChange("thalach", parseInt(e.target.value))}
+                      onChange={(e) => handleInputChange("thalach", e.target.value === "" ? "" : parseInt(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -221,7 +257,7 @@ export default function HeartDiseaseAssessment() {
                       type="number"
                       step="0.1"
                       value={formData.oldpeak}
-                      onChange={(e) => handleInputChange("oldpeak", parseFloat(e.target.value))}
+                      onChange={(e) => handleInputChange("oldpeak", e.target.value === "" ? "" : parseFloat(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -248,7 +284,7 @@ export default function HeartDiseaseAssessment() {
                       min="0"
                       max="3"
                       value={formData.ca}
-                      onChange={(e) => handleInputChange("ca", parseInt(e.target.value))}
+                      onChange={(e) => handleInputChange("ca", e.target.value === "" ? "" : parseInt(e.target.value))}
                       className="w-full h-12 px-4 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 dark:text-white font-medium transition-all outline-none"
                     />
                   </label>
@@ -314,9 +350,11 @@ export default function HeartDiseaseAssessment() {
                         </div>
                       </div>
 
-                      <p className="text-center text-sm text-slate-500 dark:text-slate-400 px-4">
-                        {result.summary}
-                      </p>
+                      {result.patient_profile && (
+                        <div className="rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-center text-sm font-semibold text-primary dark:border-primary/30 dark:bg-primary/15">
+                          Patient Profile: {result.patient_profile}
+                        </div>
+                      )}
                     </div>
 
                     {/* Explainable AI (XAI) Breakdown */}
@@ -324,12 +362,12 @@ export default function HeartDiseaseAssessment() {
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                           <span className="material-symbols-outlined text-primary">lightbulb</span>
-                          Key Contributing Factors
+                          AI Risk Analysis
                         </h3>
                       </div>
 
                       <div className="flex flex-col gap-6">
-                        {result.top_factors?.slice(0, 5).map((factor: string, index: number) => {
+                        {result.explanations?.slice(0, 5).map((factor: string, index: number) => {
                           const percentage = Math.max(20, 85 - index * 15);
                           const impact = index === 0 ? "Critical Impact" : index === 1 ? "High Impact" : "Moderate Impact";
                           const impactColor = index === 0 ? "bg-risk-high" : index === 1 ? "bg-risk-medium" : "bg-slate-400";
@@ -365,9 +403,9 @@ export default function HeartDiseaseAssessment() {
                     <div>
                       <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1">Clinical Recommendation</h4>
                       <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                        {riskLevel === "high"
+                        {riskLevel === "High"
                           ? "Urgent cardiology consultation recommended. Consider ECG, stress test, and cardiac biomarkers."
-                          : riskLevel === "moderate"
+                          : riskLevel === "Moderate"
                           ? "Cardiology follow-up advised. Monitor cardiovascular risk factors closely."
                           : "Continue regular cardiovascular health monitoring. Maintain healthy lifestyle choices."}
                       </p>
