@@ -1,6 +1,12 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
+
+class PredictionResponse(BaseModel):
+    risk_score: float
+    patient_profile: str
+    explanations: list[str]
+
 class UnifiedHealthInput(BaseModel):
     """
     Unified input for all three health risk assessments.
@@ -79,6 +85,6 @@ class UnifiedHealthResponse(BaseModel):
     Response model for the unified risk assessment.
     Contains results from all requested models.
     """
-    diabetes: Optional[dict] = None
-    heart_disease: Optional[dict] = None
-    stroke: Optional[dict] = None
+    diabetes: Optional[PredictionResponse] = None
+    heart_disease: Optional[PredictionResponse] = None
+    stroke: Optional[PredictionResponse] = None
