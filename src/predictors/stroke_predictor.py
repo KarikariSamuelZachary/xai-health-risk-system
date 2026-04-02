@@ -7,12 +7,22 @@ from sklearn.preprocessing import OneHotEncoder
 stroke_model = joblib.load("output/stroke_model.joblib")
 stroke_scaler = joblib.load("output/stroke_scaler.joblib")
 stroke_encoder = joblib.load("output/stroke_encoder.joblib")
+stroke_cluster_model = joblib.load("output/stroke_cluster_model.joblib")
 
 # Categorical and numerical feature lists (must match training)
 CATEGORICAL_FEATURES = ['gender', 'ever_married', 'work_type', 'smoking_status']
 NUMERICAL_FEATURES = ['age', 'hypertension', 'heart_disease', 'avg_glucose_level', 'bmi']
 
-def predict_stroke_risk(patient_data: dict) -> float:
+CLUSTER_PROFILES = {
+    1: "Youth / Low Risk Baseline Profile",
+    3: "Young Adult / Elevated Blood Sugar Profile",
+    2: "Young Adult / Moderate Risk Profile",
+    0: "Middle-Aged / Elevated BMI Profile",
+    4: "Older Adult / High Baseline Risk Profile"
+}
+
+
+def predict_stroke_risk(patient_data: dict) -> dict:
     """
     Returns probability of stroke
     
@@ -49,5 +59,11 @@ def predict_stroke_risk(patient_data: dict) -> float:
     
     # Get probability
     probability = stroke_model.predict_proba(X_scaled)[0][1]
+    cluster_id = int(stroke_cluster_model.predict(X_scaled)[0])
+    profile_name = CLUSTER_PROFILES.get(cluster_id, "Unknown Profile")
     
-    return probability
+    return {
+        "probability": float(probability),
+        "cluster_id": cluster_id,
+        "profile_name": profile_name
+    }
