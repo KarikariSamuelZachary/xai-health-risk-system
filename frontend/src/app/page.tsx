@@ -3,20 +3,34 @@
 import React, { useState } from "react";
 import Header from "@/components/header";
 import RiskCard from "@/components/riskcard";
-import UnifiedRiskForm from "@/components/UnifiedRiskForm";
+import UnifiedRiskForm, { UnifiedAssessmentResponse } from "@/components/UnifiedRiskForm";
+
+const getRiskLevel = (riskScore?: number) => {
+  if (riskScore === undefined) {
+    return "Unknown";
+  }
+
+  if (riskScore < 0.3) {
+    return "Low";
+  }
+
+  if (riskScore < 0.5) {
+    return "Moderate";
+  }
+
+  return "High";
+};
 
 export default function Home() {
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<UnifiedAssessmentResponse | null>(null);
 
-  const defaultHeartInsights = [
-    { icon: "info", color: "text-gray-400", text: "Submit form to see AI insights." }
-  ];
-  const defaultDiabetesInsights = [
-    { icon: "info", color: "text-gray-400", text: "Submit form to see AI insights." }
-  ];
-  const defaultStrokeInsights = [
-    { icon: "info", color: "text-gray-400", text: "Submit form to see AI insights." }
-  ];
+  const defaultHeartExplanations = ["Submit form to see AI insights."];
+  const defaultDiabetesExplanations = ["Submit form to see AI insights."];
+  const defaultStrokeExplanations = ["Submit form to see AI insights."];
+
+  const heartRiskLevel = getRiskLevel(results?.heart_disease?.risk_score);
+  const diabetesRiskLevel = getRiskLevel(results?.diabetes?.risk_score);
+  const strokeRiskLevel = getRiskLevel(results?.stroke?.risk_score);
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#0f151a] dark:text-gray-100 font-display min-h-screen flex flex-col">
@@ -40,14 +54,11 @@ export default function Home() {
               title="Heart Disease Risk"
               icon="ecg_heart"
               percent={results?.heart_disease?.risk_score ? Math.round(results.heart_disease.risk_score * 100) : 0}
-              riskLevel={results?.heart_disease ? results.heart_disease.risk_level : "Unknown"}
-              colorClass={results?.heart_disease?.risk_level === "High" ? "text-risk-high" : "text-risk-low"}
-              gradientClass={results?.heart_disease?.risk_level === "High" ? "risk-gradient-high" : "risk-gradient-low"}
-              insights={results?.heart_disease ? results.heart_disease.top_factors.map((f: string) => ({
-                 icon: "warning", 
-                 color: "text-risk-moderate", 
-                 text: f 
-              })) : defaultHeartInsights}
+              riskLevel={heartRiskLevel}
+              colorClass={heartRiskLevel === "High" ? "text-risk-high" : heartRiskLevel === "Moderate" ? "text-risk-moderate" : "text-risk-low"}
+              gradientClass={heartRiskLevel === "High" ? "risk-gradient-high" : "risk-gradient-low"}
+              patientProfile={results?.heart_disease?.patient_profile}
+              explanations={results?.heart_disease?.explanations ?? defaultHeartExplanations}
             />
 
             {/* Diabetes Card - Fixed Key: diabetes */}
@@ -55,14 +66,11 @@ export default function Home() {
               title="Diabetes Risk"
               icon="bloodtype"
               percent={results?.diabetes?.risk_score ? Math.round(results.diabetes.risk_score * 100) : 0}
-              riskLevel={results?.diabetes ? results.diabetes.risk_level : "Unknown"}
-              colorClass={results?.diabetes?.risk_level === "High" ? "text-risk-high" : "text-risk-low"}
-              gradientClass={results?.diabetes?.risk_level === "High" ? "risk-gradient-high" : "risk-gradient-low"}
-              insights={results?.diabetes ? results.diabetes.top_factors.map((f: string) => ({
-                 icon: "warning", 
-                 color: "text-risk-moderate", 
-                 text: f 
-              })) : defaultDiabetesInsights}
+              riskLevel={diabetesRiskLevel}
+              colorClass={diabetesRiskLevel === "High" ? "text-risk-high" : diabetesRiskLevel === "Moderate" ? "text-risk-moderate" : "text-risk-low"}
+              gradientClass={diabetesRiskLevel === "High" ? "risk-gradient-high" : "risk-gradient-low"}
+              patientProfile={results?.diabetes?.patient_profile}
+              explanations={results?.diabetes?.explanations ?? defaultDiabetesExplanations}
             />
 
             {/* Stroke Card - Fixed Key: stroke */}
@@ -70,14 +78,11 @@ export default function Home() {
               title="Stroke Risk"
               icon="neurology"
               percent={results?.stroke?.risk_score ? Math.round(results.stroke.risk_score * 100) : 0}
-              riskLevel={results?.stroke ? results.stroke.risk_level : "Unknown"}
-              colorClass={results?.stroke?.risk_level === "High" ? "text-risk-high" : "text-risk-low"}
-              gradientClass={results?.stroke?.risk_level === "High" ? "risk-gradient-high" : "risk-gradient-low"}
-              insights={results?.stroke ? results.stroke.top_factors.map((f: string) => ({
-                 icon: "warning", 
-                 color: "text-risk-moderate", 
-                 text: f 
-              })) : defaultStrokeInsights}
+              riskLevel={strokeRiskLevel}
+              colorClass={strokeRiskLevel === "High" ? "text-risk-high" : strokeRiskLevel === "Moderate" ? "text-risk-moderate" : "text-risk-low"}
+              gradientClass={strokeRiskLevel === "High" ? "risk-gradient-high" : "risk-gradient-low"}
+              patientProfile={results?.stroke?.patient_profile}
+              explanations={results?.stroke?.explanations ?? defaultStrokeExplanations}
             />
           </div>
         </div>
