@@ -50,7 +50,7 @@ const RiskCard: React.FC<RiskCardProps> = ({
         </div>
       </div>
       <div className="p-6 bg-white dark:bg-surface-dark">
-        <h4 className="text-xs font-bold text-[#537893] dark:text-gray-400 uppercase tracking-wider mb-3">AI Risk Analysis</h4>
+        <h4 className="text-xs font-bold text-[#537893] dark:text-gray-400 uppercase tracking-wider mb-3">Contributing Risk Factors</h4>
         <ul className="space-y-3">
           {explanations?.map((explanation, idx) => (
             <li key={idx} className="rounded-lg border border-[#e8eef2] bg-gray-50 px-4 py-3 text-sm leading-6 text-[#0f151a] dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-200">
