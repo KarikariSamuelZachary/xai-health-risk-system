@@ -1,10 +1,6 @@
 from .health_explanation_service import explain_heart_prediction
 from .diabetes_explanation_service import explain_diabetes_prediction
 from .stroke_explanation_service import explain_stroke_prediction
-from src.predictors.heart_predictor import predict_heart_risk
-from src.predictors.diabetes_predictor import predict_diabetes_risk
-from src.predictors.stroke_predictor import predict_stroke_risk
-from src.utils.risk_stratification import stratify_risk
 
 
 def _gender_to_sex(gender: str) -> int:
@@ -50,22 +46,8 @@ def unified_risk_assessment(patient_json):
             diabetes_data['Age'] = diabetes_data.get('Age')
         if 'BMI' in diabetes_data:
             diabetes_data['BMI'] = diabetes_data.get('BMI')
-            
-        diabetes_risk = float(predict_diabetes_risk(diabetes_data))
-        diabetes_level = stratify_risk(diabetes_risk)
-        diabetes_explanations = explain_diabetes_prediction(diabetes_data)
 
-        diabetes_summary = (
-            f"{diabetes_level.capitalize()} diabetes risk driven by "
-            f"{', '.join([f.split(' = ')[0] for f in diabetes_explanations[:2]])}."
-        )
-
-        results["diabetes"] = {
-            "risk_score": round(diabetes_risk, 2),
-            "risk_level": diabetes_level,
-            "summary": diabetes_summary,
-            "top_factors": diabetes_explanations
-        }
+        results["diabetes"] = explain_diabetes_prediction(diabetes_data)
     
     # --- Heart Disease ---
     if has_heart_data:
@@ -74,22 +56,8 @@ def unified_risk_assessment(patient_json):
         heart_data['sex'] = _gender_to_sex(patient_json.get('gender', 'Male'))
         if 'Age' in heart_data:
             heart_data['Age'] = heart_data.get('Age')
-            
-        heart_risk = float(predict_heart_risk(heart_data))
-        heart_level = stratify_risk(heart_risk)
-        heart_explanations = explain_heart_prediction(heart_data)
 
-        heart_summary = (
-            f"{heart_level.capitalize()} heart disease risk driven by "
-            f"{', '.join([f.split(' = ')[0] for f in heart_explanations[:2]])}."
-        )
-
-        results["heart_disease"] = {
-            "risk_score": round(heart_risk, 2),
-            "risk_level": heart_level,
-            "summary": heart_summary,
-            "top_factors": heart_explanations
-        }
+        results["heart_disease"] = explain_heart_prediction(heart_data)
     
     # --- Stroke ---
     if has_stroke_data:
@@ -114,22 +82,7 @@ def unified_risk_assessment(patient_json):
             stroke_data['heart_disease'] = 1 if results["heart_disease"]["risk_score"] >= 0.5 else 0
         else:
             stroke_data['heart_disease'] = 0
-            
-        stroke_risk = float(predict_stroke_risk(stroke_data))
-        stroke_level = stratify_risk(stroke_risk)
-        stroke_explanations = explain_stroke_prediction(stroke_data)
 
-        stroke_summary = (
-            f"{stroke_level.capitalize()} stroke risk driven by "
-            f"{', '.join([f.split(' = ')[0] for f in stroke_explanations[:2]])}."
-        )
-
-        results["stroke"] = {
-            "risk_score": round(stroke_risk, 2),
-            "risk_level": stroke_level,
-            "summary": stroke_summary,
-            "top_factors": stroke_explanations
-        }
+        results["stroke"] = explain_stroke_prediction(stroke_data)
     
     return results
-
