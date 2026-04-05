@@ -17,13 +17,31 @@ def load_data(path):
     df['Outcome'] = df['Outcome'].astype('category')
     return df
 
-def preprocess_data(df):
-    # Log1p transform for highly skewed features
+import json
+
+def preprocess_data_and_save_bounds(df):
+    # Log1p transform
     for col in ['Insulin', 'DiabetesPedigreeFunction', 'Age']:
         df[col] = np.log1p(df[col])
-    # Winsorize for mild skewness
-    for col in ['Pregnancies', 'Glucose', 'SkinThickness', 'BMI']:
-        df[col] = winsorize(df[col], limits=[0.01, 0.01])
+        
+    winsorize_cols = ['Pregnancies', 'Glucose', 'SkinThickness', 'BMI']
+    bounds = {}
+    
+    # Calculate, apply and save static bounds
+    for col in winsorize_cols:
+        lower_bound = df[col].quantile(0.01)
+        upper_bound = df[col].quantile(0.99)
+        
+        # Save bounds for the backend
+        bounds[col] = {"lower": lower_bound, "upper": upper_bound}
+        
+        # Apply clipping to training data
+        df[col] = np.clip(df[col], lower_bound, upper_bound)
+        
+    # Save the bounds to a JSON file
+    with open('../../output/diabetes_winsorize_bounds.json', 'w') as f:
+        json.dump(bounds, f)
+        
     return df
 
 def train_and_evaluate(df):
@@ -54,5 +72,5 @@ def train_and_evaluate(df):
 
 if __name__ == "__main__":
     df = load_data("../../data/processed/diabetes_processed.csv")
-    df = preprocess_data(df)
+    df = preprocess_data_and_save_bounds(df)
     train_and_evaluate(df)
