@@ -1,11 +1,16 @@
 import joblib
 import pandas as pd
 import numpy as np
+import json
 
 # Load artifacts once
 diabetes_model = joblib.load("output/diabetes_rf_model.joblib")
 diabetes_scaler = joblib.load("output/diabetes_rf_scaler.joblib")
 diabetes_cluster_model = joblib.load("output/diabetes_cluster_model.joblib")
+
+# Load the exact clipping bounds from training
+with open("output/diabetes_winsorize_bounds.json", "r") as f:
+    WINSORIZE_BOUNDS = json.load(f)
 
 DIABETES_FEATURES = [
     "Pregnancies", "Glucose", "BloodPressure",
@@ -27,9 +32,17 @@ def predict_diabetes_risk(patient_data: dict) -> dict:
 
     df = pd.DataFrame([patient_data])
 
+    # Apply log transforms
     for col in ['Insulin', 'DiabetesPedigreeFunction', 'Age']:
          if col in df.columns:
              df[col] = np.log1p(df[col])
+             
+    # Apply static winsorization (clipping)
+    for col in ['Pregnancies', 'Glucose', 'SkinThickness', 'BMI']:
+        if col in df.columns:
+            lower = WINSORIZE_BOUNDS[col]["lower"]
+            upper = WINSORIZE_BOUNDS[col]["upper"]
+            df[col] = np.clip(df[col], lower, upper)
              
     df = df.reindex(columns=DIABETES_FEATURES)
 
