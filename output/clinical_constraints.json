@@ -1,0 +1,381 @@
+{
+  "diabetes": [
+    {
+      "name": "Pregnancies",
+      "min_val": 0,
+      "max_val": 20,
+      "mutable": false,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "PIMA dataset documentation; biological female population only",
+      "notes": "Immutable: this is a historical fact the patient cannot alter on a form"
+    },
+    {
+      "name": "Glucose",
+      "min_val": 40,
+      "max_val": 400,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "WHO 2006 Diabetes Diagnosis; ADA hypoglycaemia thresholds",
+      "notes": "Primary adversarial target. Underreporting glucose is the most direct evasion."
+    },
+    {
+      "name": "BloodPressure",
+      "min_val": 40,
+      "max_val": 140,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "AHA Blood Pressure Guidelines 2017",
+      "notes": "Diastolic BP. Less likely attack vector than Glucose."
+    },
+    {
+      "name": "SkinThickness",
+      "min_val": 5,
+      "max_val": 80,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "Durnin & Womersley 1974 body fat estimation norms",
+      "notes": "Moderate attack vector. Hard to self-report convincingly."
+    },
+    {
+      "name": "Insulin",
+      "min_val": 2,
+      "max_val": 500,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "ADA insulin reference ranges; Tietz Fundamentals of Clinical Chemistry",
+      "notes": "High variance in data. Adversary could plausibly underreport."
+    },
+    {
+      "name": "BMI",
+      "min_val": 13.0,
+      "max_val": 80.0,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "WHO BMI Classification 2000; clinical case literature",
+      "notes": "Second most likely attack vector after Glucose. Adversary underreports weight."
+    },
+    {
+      "name": "DiabetesPedigreeFunction",
+      "min_val": 0.05,
+      "max_val": 2.5,
+      "mutable": false,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "Smith et al. 1988 (original PIMA study); dataset documentation",
+      "notes": "Immutable: derived from verifiable family medical history"
+    },
+    {
+      "name": "Age",
+      "min_val": 21,
+      "max_val": 100,
+      "mutable": false,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "PIMA dataset documentation; dataset age range 21\u201381",
+      "notes": "Immutable: verifiable from identity documents"
+    }
+  ],
+  "heart": [
+    {
+      "name": "Age",
+      "min_val": 18,
+      "max_val": 100,
+      "mutable": false,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "Cleveland dataset documentation; verifiable from ID",
+      "notes": ""
+    },
+    {
+      "name": "sex",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1
+      ],
+      "clinical_source": "Cleveland dataset coding; binary biological sex",
+      "notes": "Immutable categorical. Critical: cannot be fractionally perturbed."
+    },
+    {
+      "name": "cp",
+      "min_val": null,
+      "max_val": null,
+      "mutable": true,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "clinical_source": "Cleveland dataset coding",
+      "notes": "Categorical. Adversary could misrepresent symptom type."
+    },
+    {
+      "name": "trestbps",
+      "min_val": 70,
+      "max_val": 250,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "AHA Blood Pressure Guidelines 2017",
+      "notes": "Systolic BP. Adversary could underreport."
+    },
+    {
+      "name": "chol",
+      "min_val": 100,
+      "max_val": 650,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "ACC/AHA Cholesterol Guidelines 2018",
+      "notes": "Primary attack vector for heart disease evasion."
+    },
+    {
+      "name": "fbs",
+      "min_val": null,
+      "max_val": null,
+      "mutable": true,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1
+      ],
+      "clinical_source": "Cleveland dataset coding; ADA fasting glucose thresholds",
+      "notes": "Adversary could falsely report normal fasting sugar."
+    },
+    {
+      "name": "restecg",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1,
+        2
+      ],
+      "clinical_source": "Cleveland dataset coding",
+      "notes": "Immutable: objective measurement from ECG machine."
+    },
+    {
+      "name": "thalach",
+      "min_val": 60,
+      "max_val": 220,
+      "mutable": false,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "ACSM Exercise Testing Guidelines; dataset range",
+      "notes": "Immutable: objectively measured during supervised exercise test."
+    },
+    {
+      "name": "exang",
+      "min_val": null,
+      "max_val": null,
+      "mutable": true,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1
+      ],
+      "clinical_source": "Cleveland dataset coding",
+      "notes": "Adversary could deny experiencing angina."
+    },
+    {
+      "name": "oldpeak",
+      "min_val": 0.0,
+      "max_val": 8.0,
+      "mutable": false,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "Cleveland dataset documentation; ECG interpretation standards",
+      "notes": "Immutable: objective ECG measurement."
+    },
+    {
+      "name": "slope",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1,
+        2
+      ],
+      "clinical_source": "Cleveland dataset coding",
+      "notes": "Immutable: objective ECG measurement."
+    },
+    {
+      "name": "ca",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "clinical_source": "Cleveland dataset documentation",
+      "notes": "Immutable: determined by fluoroscopy imaging."
+    },
+    {
+      "name": "thal",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1,
+        2
+      ],
+      "clinical_source": "Cleveland dataset coding",
+      "notes": "Immutable: genetic condition confirmed by nuclear imaging."
+    }
+  ],
+  "stroke": [
+    {
+      "name": "gender",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        "Male",
+        "Female",
+        "Other"
+      ],
+      "clinical_source": "Dataset documentation",
+      "notes": "Immutable categorical. Cannot be numerically perturbed."
+    },
+    {
+      "name": "age",
+      "min_val": 18,
+      "max_val": 100,
+      "mutable": false,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "Dataset documentation; verifiable from ID",
+      "notes": ""
+    },
+    {
+      "name": "hypertension",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1
+      ],
+      "clinical_source": "ICD-10 hypertension diagnosis codes",
+      "notes": "Immutable: established diagnosis from medical records."
+    },
+    {
+      "name": "heart_disease",
+      "min_val": null,
+      "max_val": null,
+      "mutable": false,
+      "is_categorical": true,
+      "allowed_values": [
+        0,
+        1
+      ],
+      "clinical_source": "ICD-10 heart disease diagnosis codes",
+      "notes": "Immutable: established diagnosis. Interesting edge case: imputed from heart model."
+    },
+    {
+      "name": "ever_married",
+      "min_val": null,
+      "max_val": null,
+      "mutable": true,
+      "is_categorical": true,
+      "allowed_values": [
+        "Yes",
+        "No"
+      ],
+      "clinical_source": "Dataset documentation",
+      "notes": "Mutable self-report. Low clinical impact \u2014 likely weak attack vector."
+    },
+    {
+      "name": "work_type",
+      "min_val": null,
+      "max_val": null,
+      "mutable": true,
+      "is_categorical": true,
+      "allowed_values": [
+        "children",
+        "Govt_job",
+        "Never_worked",
+        "Private",
+        "Self-employed"
+      ],
+      "clinical_source": "Dataset documentation",
+      "notes": "Mutable. Adversary could misreport work type."
+    },
+    {
+      "name": "Residence_type",
+      "min_val": null,
+      "max_val": null,
+      "mutable": true,
+      "is_categorical": true,
+      "allowed_values": [
+        "Rural",
+        "Urban"
+      ],
+      "clinical_source": "Dataset documentation",
+      "notes": "Mutable self-report. Likely weak attack vector."
+    },
+    {
+      "name": "avg_glucose_level",
+      "min_val": 40,
+      "max_val": 400,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "WHO Diabetes Diagnosis; ADA hypoglycaemia thresholds",
+      "notes": "Primary attack vector. Same feature as Glucose in diabetes model."
+    },
+    {
+      "name": "bmi",
+      "min_val": 13.0,
+      "max_val": 80.0,
+      "mutable": true,
+      "is_categorical": false,
+      "allowed_values": null,
+      "clinical_source": "WHO BMI Classification 2000",
+      "notes": "Second most likely attack vector. Adversary underreports weight."
+    },
+    {
+      "name": "smoking_status",
+      "min_val": null,
+      "max_val": null,
+      "mutable": true,
+      "is_categorical": true,
+      "allowed_values": [
+        "formerly smoked",
+        "never smoked",
+        "smokes",
+        "Unknown"
+      ],
+      "clinical_source": "Dataset documentation; AHA stroke risk factors",
+      "notes": "HIGH RISK attack vector. Smoker claiming never smoked is a realistic evasion."
+    }
+  ],
+  "metadata": {
+    "description": "Clinical plausibility constraints for adversarial robustness analysis",
+    "threat_model": "Black-box, clinically-constrained adversary",
+    "version": "1.0"
+  }
+}
