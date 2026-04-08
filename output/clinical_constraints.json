@@ -72,7 +72,7 @@
     },
     {
       "name": "Age",
-      "min_val": 21,
+      "min_val": 18,
       "max_val": 100,
       "mutable": false,
       "is_categorical": false,
@@ -224,7 +224,8 @@
         0,
         1,
         2,
-        3
+        3,
+        4
       ],
       "clinical_source": "Cleveland dataset documentation",
       "notes": "Immutable: determined by fluoroscopy imaging."
@@ -238,7 +239,8 @@
       "allowed_values": [
         0,
         1,
-        2
+        2,
+        3
       ],
       "clinical_source": "Cleveland dataset coding",
       "notes": "Immutable: genetic condition confirmed by nuclear imaging."
