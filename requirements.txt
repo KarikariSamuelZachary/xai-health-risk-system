@@ -6,7 +6,7 @@ scipy
 joblib
 imbalanced-learn
 shap
-art
+adversarial-robustness-toolbox==1.20.1
 
 # Data Visualization (notebooks)
 matplotlib
