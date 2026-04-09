@@ -6,6 +6,7 @@ scipy
 joblib
 imbalanced-learn
 shap
+art
 
 # Data Visualization (notebooks)
 matplotlib
