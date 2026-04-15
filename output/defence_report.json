@@ -1,0 +1,280 @@
+{
+  "notes": [
+    "Defence evaluation uses fixed Section 2 attacks and does not include adaptive re-attacks.",
+    "Clean accuracy is evaluated on reconstructed held-out splits with repo-aligned preprocessing.",
+    "Cross-disease defence comparisons remain descriptive rather than causal benchmarks."
+  ],
+  "baseline_clean_metrics": {
+    "diabetes": {
+      "accuracy": 75.32,
+      "precision": 62.64,
+      "recall": 71.25,
+      "f1": 66.67
+    },
+    "heart": {
+      "accuracy": 70.13,
+      "precision": 62.13,
+      "recall": 97.99,
+      "f1": 76.04
+    },
+    "stroke": {
+      "accuracy": 74.39,
+      "precision": 17.43,
+      "recall": 77.38,
+      "f1": 28.45
+    }
+  },
+  "section3_reference": {
+    "diabetes": {
+      "attack_method": "HopSkipJump + raw-space clinical projection",
+      "n_total": 50,
+      "n_success": 30,
+      "asr": 60.0,
+      "l2_mean": 32.857396,
+      "l2_median": 32.583461,
+      "l2_std": 22.864925,
+      "l2_iqr": 28.361755
+    },
+    "heart": {
+      "attack_method": "Greedy constrained attack in raw clinical space",
+      "n_total": 50,
+      "n_success": 5,
+      "asr": 10.0,
+      "l2_mean": 96.406341,
+      "l2_median": 90.005555,
+      "l2_std": 18.649864,
+      "l2_iqr": 22.003554
+    },
+    "stroke": {
+      "attack_method": "Greedy constrained attack in raw clinical space",
+      "n_total": 50,
+      "n_success": 7,
+      "asr": 14.0,
+      "l2_mean": 77.018491,
+      "l2_median": 66.58,
+      "l2_std": 49.385415,
+      "l2_iqr": 23.758819
+    }
+  },
+  "winsorising": {
+    "diabetes": {
+      "p1_99": {
+        "defence_name": "Winsorising [1, 99]",
+        "clean_acc": 75.32,
+        "defended_asr": 60.0,
+        "n_still_flip": 30,
+        "n_original_successes": 30,
+        "residual_on_original_successes": 100.0,
+        "mutable_numeric_features": [
+          "Glucose",
+          "BloodPressure",
+          "SkinThickness",
+          "Insulin",
+          "BMI"
+        ],
+        "bounds": {
+          "Glucose": {
+            "lower": 67.36,
+            "upper": 196.0
+          },
+          "BloodPressure": {
+            "lower": 44.0,
+            "upper": 104.0
+          },
+          "SkinThickness": {
+            "lower": 11.0,
+            "upper": 50.0
+          },
+          "Insulin": {
+            "lower": 27.520000000000003,
+            "upper": 504.5999999999998
+          },
+          "BMI": {
+            "lower": 19.536,
+            "upper": 49.131999999999984
+          }
+        }
+      },
+      "p5_95": {
+        "defence_name": "Winsorising [5, 95]",
+        "clean_acc": 75.32,
+        "defended_asr": 58.0,
+        "n_still_flip": 29,
+        "n_original_successes": 30,
+        "residual_on_original_successes": 96.67,
+        "mutable_numeric_features": [
+          "Glucose",
+          "BloodPressure",
+          "SkinThickness",
+          "Insulin",
+          "BMI"
+        ],
+        "bounds": {
+          "Glucose": {
+            "lower": 81.0,
+            "upper": 181.0
+          },
+          "BloodPressure": {
+            "lower": 52.0,
+            "upper": 90.0
+          },
+          "SkinThickness": {
+            "lower": 14.0,
+            "upper": 43.19999999999999
+          },
+          "Insulin": {
+            "lower": 52.6,
+            "upper": 291.4
+          },
+          "BMI": {
+            "lower": 22.18,
+            "upper": 44.519999999999996
+          }
+        }
+      }
+    },
+    "heart": {
+      "p1_99": {
+        "defence_name": "Winsorising [1, 99]",
+        "clean_acc": 70.13,
+        "defended_asr": 0.0,
+        "n_still_flip": 0,
+        "n_original_successes": 5,
+        "residual_on_original_successes": 0.0,
+        "mutable_numeric_features": [
+          "trestbps",
+          "chol"
+        ],
+        "bounds": {
+          "trestbps": {
+            "lower": 100.0,
+            "upper": 180.0
+          },
+          "chol": {
+            "lower": 142.28,
+            "upper": 388.5600000000011
+          }
+        }
+      },
+      "p5_95": {
+        "defence_name": "Winsorising [5, 95]",
+        "clean_acc": 70.13,
+        "defended_asr": 0.0,
+        "n_still_flip": 0,
+        "n_original_successes": 5,
+        "residual_on_original_successes": 0.0,
+        "mutable_numeric_features": [
+          "trestbps",
+          "chol"
+        ],
+        "bounds": {
+          "trestbps": {
+            "lower": 108.0,
+            "upper": 164.0
+          },
+          "chol": {
+            "lower": 174.8,
+            "upper": 326.19999999999993
+          }
+        }
+      }
+    },
+    "stroke": {
+      "p1_99": {
+        "defence_name": "Winsorising [1, 99]",
+        "clean_acc": 74.39,
+        "defended_asr": 6.0,
+        "n_still_flip": 3,
+        "n_original_successes": 7,
+        "residual_on_original_successes": 42.86,
+        "mutable_numeric_features": [
+          "avg_glucose_level",
+          "bmi"
+        ],
+        "bounds": {
+          "avg_glucose_level": {
+            "lower": 56.458,
+            "upper": 244.78959999999955
+          },
+          "bmi": {
+            "lower": 18.6,
+            "upper": 53.82399999999998
+          }
+        }
+      },
+      "p5_95": {
+        "defence_name": "Winsorising [5, 95]",
+        "clean_acc": 74.31,
+        "defended_asr": 6.0,
+        "n_still_flip": 3,
+        "n_original_successes": 7,
+        "residual_on_original_successes": 42.86,
+        "mutable_numeric_features": [
+          "avg_glucose_level",
+          "bmi"
+        ],
+        "bounds": {
+          "avg_glucose_level": {
+            "lower": 60.406,
+            "upper": 218.46
+          },
+          "bmi": {
+            "lower": 21.18,
+            "upper": 43.7
+          }
+        }
+      }
+    }
+  },
+  "adversarial_training": {
+    "diabetes": {
+      "clean_acc": 73.59,
+      "defended_asr": 0.0,
+      "n_still_flip": 0,
+      "n_original_successes": 30,
+      "residual_on_original_successes": 0.0,
+      "n_augmented": 50
+    },
+    "heart": {
+      "clean_acc": 83.44,
+      "defended_asr": 0.0,
+      "n_still_flip": 0,
+      "n_original_successes": 5,
+      "residual_on_original_successes": 0.0,
+      "n_augmented": 50
+    },
+    "stroke": {
+      "clean_acc": 74.71,
+      "defended_asr": 0.0,
+      "n_still_flip": 0,
+      "n_original_successes": 7,
+      "residual_on_original_successes": 0.0,
+      "n_augmented": 50
+    }
+  },
+  "seed_retention": [
+    {
+      "Disease": "Diabetes RF",
+      "Winsorising [1, 99] high-risk seeds kept": 50,
+      "Adv Training high-risk seeds kept": 50,
+      "Total seeds": 50
+    },
+    {
+      "Disease": "Heart LR",
+      "Winsorising [1, 99] high-risk seeds kept": 50,
+      "Adv Training high-risk seeds kept": 50,
+      "Total seeds": 50
+    },
+    {
+      "Disease": "Stroke LR",
+      "Winsorising [1, 99] high-risk seeds kept": 50,
+      "Adv Training high-risk seeds kept": 45,
+      "Total seeds": 50
+    }
+  ],
+  "saved_bundles": {
+    "diabetes": "/home/iaminspiredbro/my_projects/xai-health-risk-system/output/diabetes_adv_trained_bundle.joblib",
+    "heart": "/home/iaminspiredbro/my_projects/xai-health-risk-system/output/heart_adv_trained_bundle.joblib",
+    "stroke": "/home/iaminspiredbro/my_projects/xai-health-risk-system/output/stroke_adv_trained_bundle.joblib"
+  }
+}
