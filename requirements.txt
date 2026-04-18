@@ -7,6 +7,7 @@ joblib
 imbalanced-learn
 shap
 adversarial-robustness-toolbox==1.20.1
+statsmodels
 
 # Data Visualization (notebooks)
 matplotlib
