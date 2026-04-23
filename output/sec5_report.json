@@ -1,0 +1,127 @@
+{
+  "cohort": {
+    "mode": "post_defence",
+    "description": "Reconstructed D1 survivors: successful attacks that remain low-risk after D1 winsorisation.",
+    "counts": {
+      "diabetes": 30,
+      "heart": 0,
+      "stroke": 3
+    }
+  },
+  "E1_prediction_evasion": {
+    "diabetes": [
+      {
+        "example_idx": 0,
+        "pred_orig": 1,
+        "pred_adv": 0,
+        "prob_orig": 0.98,
+        "prob_adv": 0.42,
+        "l2_input": 39.4993,
+        "l2_shap_shift": 0.3726,
+        "top_orig_feature": "Glucose",
+        "top_adv_feature": "Age",
+        "cohort_mode": "post_defence"
+      },
+      {
+        "example_idx": 1,
+        "pred_orig": 1,
+        "pred_adv": 0,
+        "prob_orig": 0.95,
+        "prob_adv": 0.44,
+        "l2_input": 47.4659,
+        "l2_shap_shift": 0.298,
+        "top_orig_feature": "Age",
+        "top_adv_feature": "Insulin",
+        "cohort_mode": "post_defence"
+      },
+      {
+        "example_idx": 2,
+        "pred_orig": 1,
+        "pred_adv": 0,
+        "prob_orig": 0.95,
+        "prob_adv": 0.5,
+        "l2_input": 50.3869,
+        "l2_shap_shift": 0.2507,
+        "top_orig_feature": "Glucose",
+        "top_adv_feature": "Glucose",
+        "cohort_mode": "post_defence"
+      }
+    ],
+    "stroke": [
+      {
+        "example_idx": 0,
+        "pred_orig": 1,
+        "pred_adv": 0,
+        "prob_orig": 0.5064,
+        "prob_adv": 0.4726,
+        "l2_input": 50.122,
+        "l2_shap_shift": 0.1354,
+        "top_orig_feature": "age",
+        "top_adv_feature": "age",
+        "cohort_mode": "post_defence"
+      },
+      {
+        "example_idx": 1,
+        "pred_orig": 1,
+        "pred_adv": 0,
+        "prob_orig": 0.5657,
+        "prob_adv": 0.4841,
+        "l2_input": 55.711,
+        "l2_shap_shift": 0.2334,
+        "top_orig_feature": "hypertension",
+        "top_adv_feature": "hypertension",
+        "cohort_mode": "post_defence"
+      },
+      {
+        "example_idx": 2,
+        "pred_orig": 1,
+        "pred_adv": 0,
+        "prob_orig": 0.5239,
+        "prob_adv": 0.4875,
+        "l2_input": 55.522,
+        "l2_shap_shift": 0.146,
+        "top_orig_feature": "age",
+        "top_adv_feature": "age",
+        "cohort_mode": "post_defence"
+      }
+    ]
+  },
+  "E2_explanation_evasion": {
+    "diabetes": {
+      "success": false,
+      "true_driver": "Glucose",
+      "decoy": "Age",
+      "prob_orig": 1.0,
+      "prob_evasion": 0.99,
+      "pred_evasion": 1,
+      "shap_td_orig": 0.2829,
+      "shap_td_evasion": 0.266,
+      "shap_decoy_orig": 0.0978,
+      "shap_decoy_evasion": 0.0972,
+      "rank_td_orig": 1,
+      "rank_td_evasion": 1,
+      "rank_decoy_orig": 2,
+      "rank_decoy_evasion": 2,
+      "l2_input": 2.0000002718165195,
+      "cohort_mode": "post_defence"
+    },
+    "stroke": {
+      "success": false,
+      "true_driver": "age",
+      "decoy": "avg_glucose_level",
+      "prob_orig": 0.5657,
+      "prob_evasion": 0.5667,
+      "pred_evasion": 1,
+      "shap_td_orig": 0.1155,
+      "shap_td_evasion": 0.1155,
+      "shap_decoy_orig": 0.0118,
+      "shap_decoy_evasion": 0.0155,
+      "rank_td_orig": 2,
+      "rank_td_evasion": 2,
+      "rank_decoy_orig": 5,
+      "rank_decoy_evasion": 5,
+      "l2_input": 2.000000005462766,
+      "cohort_mode": "post_defence"
+    }
+  }
+}
