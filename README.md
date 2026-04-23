@@ -15,7 +15,7 @@ Each prediction now returns a structured result with:
 
 ## What The System Does
 
-- Predicts risk for **diabetes**, **heart disease**, and **stroke**
+- Predicts risk for **diabetes**, **heart disease** and **stroke**
 - Supports a **unified assessment flow** where shared inputs are entered once
 - Uses a **patient profile** derived from a K-Means cluster for each condition
 - Generates **natural-language contributing factors** from SHAP values
