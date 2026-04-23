@@ -1,30 +1,43 @@
 # XAI Health Risk Assessment System
 
-An end-to-end health risk assessment system for **diabetes**, **heart disease**, and **stroke**. The project combines:
+An end-to-end health risk assessment stack for **diabetes**, **heart disease**, and **stroke**. It combines supervised risk models, **K-Means patient profiles**, **SHAP** attributions turned into short natural-language explanations, and a **FastAPI** backend with a **Next.js** frontend. A parallel track of **Jupyter notebooks** studies attack surfaces, clinical plausibility constraints, defences, and explanation stability under adversarial input.
 
-- **Supervised learning** for disease risk prediction
-- **Unsupervised K-Means clustering** for patient profile grouping
-- **SHAP-based explanations** translated into plain language
-- A **FastAPI** backend and **Next.js** frontend for interactive assessment
+Each successful assessment returns:
 
-Each prediction now returns a structured result with:
+- `risk_score` — model probability of the positive class  
+- `patient_profile` — human-readable label from the condition-specific cluster model  
+- `explanations` — ordered strings (cluster context plus top SHAP-driven factors)
 
-- `risk_score`
-- `patient_profile`
-- `explanations`
+## What the system does
 
-## What The System Does
+- Predicts risk for diabetes, heart disease, and stroke from tabular patient features.  
+- Offers a **unified** flow: shared fields (e.g. age, BMI, gender, glucose) are mapped into each model’s schema where applicable.  
+- Derives **cluster-based profiles** per disease and prefixes explanations with that context.  
+- For stroke, if `diagnosed_heart_condition` is not explicitly true, the unified flow can infer `heart_disease` for the stroke model from the **heart disease** prediction when that model ran in the same request.  
+- Serves standalone JSON endpoints plus a web UI for single-disease and unified assessment.
 
-- Predicts risk for **diabetes**, **heart disease** and **stroke**
-- Supports a **unified assessment flow** where shared inputs are entered once
-- Uses a **patient profile** derived from a K-Means cluster for each condition
-- Generates **natural-language contributing factors** from SHAP values
-- Supports **standalone condition pages** and a **unified dashboard**
-- Reuses the heart disease result inside the stroke workflow when a diagnosed heart condition is not supplied
+## Research: robustness, constraints, and explanation behaviour
 
-## Current Prediction Output
+Beyond the production API path, the `notebooks/` folder contains reproducible experiments (mostly using **scikit-learn**, **SHAP**, **Adversarial Robustness Toolbox**, and **statsmodels**):
 
-All assessment endpoints now return the same high-level response shape:
+| Notebook | Topic |
+|----------|--------|
+| `01_*`–`05_*` | Loading, cleaning, EDA, correlation / redundancy, merged-dataset views |
+| `06_train_*` | Supervised training for diabetes, heart, and stroke |
+| `07_train_heart_disease_prediction_model.ipynb` | Heart model training pipeline |
+| `08_diabetes_clustering.ipynb`–`10_stroke_clustering.ipynb` | K-Means profiles aligned with each predictor |
+| `11_attack_surface_mapping.ipynb` | Attack-surface analysis; figures such as `output/*_attack_surface.png` |
+| `12_clinical_plausibility_constraint.ipynb` | Clinically plausible input ranges; feeds `output/clinical_constraints.json` |
+| `13_constrained_attacks.ipynb` | Attacks under clinical bounds |
+| `14_vulnerability_comparison.ipynb` | Comparative vulnerability summaries; `output/vulnerability_report.json` |
+| `15_defence_implementation.ipynb` | Defence strategies (e.g. winsorisation); `output/defence_report.json` |
+| `16_explanation_evasion.ipynb` | Prediction vs explanation behaviour under perturbation; `output/sec5_report.json` and related plots |
+
+These artefacts are **not required** to run the API: they document and support robustness / XAI research. The diabetes predictor optionally applies **fixed winsorisation bounds** from `output/diabetes_winsorize_bounds.json` for consistency with the trained pipeline.
+
+## API response shape
+
+Single-condition endpoints and each block inside the unified response follow:
 
 ```json
 {
@@ -38,94 +51,47 @@ All assessment endpoints now return the same high-level response shape:
 }
 ```
 
-For the unified endpoint, each condition is returned under its own key:
+Unified assessment returns a JSON object with **only the keys for models whose required inputs were all present** (for example `diabetes`, `heart_disease`, `stroke`), not necessarily all three every time.
 
-```json
-{
-  "diabetes": {
-    "risk_score": 0.64,
-    "patient_profile": "Elevated Metabolic Risk Profile",
-    "explanations": [
-      "Patient matches the 'Elevated Metabolic Risk Profile'. ",
-      "High risk is strongly driven by Glucose."
-    ]
-  },
-  "heart_disease": {
-    "risk_score": 0.82,
-    "patient_profile": "Advanced Coronary Risk Profile",
-    "explanations": [
-      "Patient matches the 'Advanced Coronary Risk Profile'. "
-    ]
-  },
-  "stroke": {
-    "risk_score": 0.18,
-    "patient_profile": "Middle-Aged / Elevated BMI Profile",
-    "explanations": [
-      "Patient matches the 'Middle-Aged / Elevated BMI Profile'. "
-    ]
-  }
-}
-```
+## Model summary
 
-## Model Summary
+### Supervised models
 
-### Supervised Models
+- **Diabetes**: Random Forest (with log transforms and winsorisation bounds from training).  
+- **Heart disease**: Lasso logistic regression.  
+- **Stroke**: Logistic regression with a fitted categorical encoder.
 
-- **Diabetes**: Random Forest
-- **Heart Disease**: Lasso Logistic Regression
-- **Stroke**: Logistic Regression with categorical encoding
+### Unsupervised (patient profiles)
 
-### Unsupervised Models
+Per-condition **K-Means** models in `output/`:
 
-Each supervised pipeline is now paired with a **K-Means clustering model**:
+- `diabetes_cluster_model.joblib`  
+- `heart_cluster_model.joblib`  
+- `stroke_cluster_model.joblib`  
 
-- `output/diabetes_cluster_model.joblib`
-- `output/heart_cluster_model.joblib`
-- `output/stroke_cluster_model.joblib`
+Their cluster IDs map to named profiles inside the predictors.
 
-These cluster models produce the `patient_profile` value returned by the API.
+## Notable product features
 
-## Key Features
+- **Unified shared-field workflow** — shared inputs are mapped to heart (`gender` → `sex`), stroke (`Glucose` → `avg_glucose_level`, etc.), and diabetes as appropriate.  
+- **Cluster-aware explanations** — SHAP text is combined with the cluster profile line.  
+- **Stroke / heart linkage** — unified stroke inference uses the heart result when `diagnosed_heart_condition` is false or omitted and heart assessment ran in the same call.  
+- **Standalone and unified routes** — `/assess/diabetes`, `/assess/heart`, `/assess/stroke`, `/assess/unified`.
 
-- **Unified shared-field workflow**
-  - Shared inputs such as `Age`, `BMI`, `gender` and `Glucose` are entered once and mapped into the relevant model formats.
-- **Cluster-aware explanations**
-  - Each condition returns both a predicted risk score and a cluster-derived patient profile.
-- **SHAP natural-language summaries**
-  - SHAP attributions are converted into readable explanation text for the frontend and API consumers.
-- **Stroke heart-condition fallback**
-  - If `diagnosed_heart_condition` is not supplied as `true`, the unified service uses the heart disease prediction to derive the stroke model’s `heart_disease` input.
-- **Standalone and unified assessment flows**
-  - The app supports:
-    - `/assess/diabetes`
-    - `/assess/heart`
-    - `/assess/stroke`
-    - `/assess/unified`
+## Architecture
 
-## System Architecture
+1. **`notebooks/`** — data prep, training, clustering, and robustness / XAI experiments.  
+2. **`output/`** — serialised models, scalers, encoders, cluster models, JSON reports from research notebooks, and exported figures.  
+3. **`src/`** — FastAPI app and libraries:  
+   - `predictors/` — preprocessing and inference (loads `output/` artefacts; cluster labels for profiles).  
+   - `services/` — orchestration and explanation assembly.  
+   - `schemas/` — Pydantic request/response models.  
+   - `explainabilility/` — SHAP helpers and natural-language explanation generation (folder name kept as in code).  
+   - `models/` — training entrypoints callable as modules.  
+   - `cli/` — smoke tests and one-off prediction CLIs.  
+4. **`frontend/`** — Next.js App Router UI (unified dashboard and per-disease pages).
 
-1. **Data science notebooks** in `notebooks/`
-   - data cleaning
-   - EDA
-   - correlation analysis
-   - model training
-   - clustering experiments
-2. **Serialized model artifacts** in `output/`
-   - predictors
-   - scalers
-   - encoders
-   - clustering models
-3. **Backend application** in `src/`
-   - `predictors/`: preprocessing and inference
-   - `services/`: orchestration and explanation assembly
-   - `schemas/`: request/response validation
-   - `explainabilility/`: SHAP integration and explanation generation
-4. **Frontend application** in `frontend/`
-   - unified dashboard
-   - standalone disease pages
-   - result cards and explanation display
-
-## Project Structure
+## Project structure
 
 ```text
 xai-health-risk-system/
@@ -133,28 +99,12 @@ xai-health-risk-system/
 │   ├── processed/
 │   └── raw/
 ├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx
-│   │   │   ├── diabetes/page.tsx
-│   │   │   ├── heart-disease/page.tsx
-│   │   │   └── stroke/page.tsx
-│   │   └── components/
+│   ├── src/app/          # pages: home, diabetes, heart-disease, stroke
+│   ├── src/components/
 │   ├── .env.example
-│   ├── .env.production
 │   └── package.json
-├── notebooks/
-├── output/
-│   ├── diabetes_cluster_model.joblib
-│   ├── diabetes_rf_model.joblib
-│   ├── diabetes_rf_scaler.joblib
-│   ├── heart_cluster_model.joblib
-│   ├── heart_disease_lasso_model.joblib
-│   ├── heart_disease_scaler.joblib
-│   ├── stroke_cluster_model.joblib
-│   ├── stroke_encoder.joblib
-│   ├── stroke_model.joblib
-│   └── stroke_scaler.joblib
+├── notebooks/            # 01–16: EDA through defences / explanation evasion
+├── output/               # models, scalers, encoders, clusters, research JSON/PNGs
 ├── src/
 │   ├── cli/
 │   ├── explainabilility/
@@ -164,23 +114,20 @@ xai-health-risk-system/
 │   ├── services/
 │   ├── utils/
 │   └── main.py
-└── requirements.txt
+├── requirements.txt
+├── CONTRIBUTING.md
+└── README.md
 ```
+
+**`output/` contents (overview)**  
+
+- **Serving**: `diabetes_rf_model.joblib`, `diabetes_rf_scaler.joblib`, `diabetes_winsorize_bounds.json`, `heart_disease_lasso_model.joblib`, `heart_disease_scaler.joblib`, `stroke_model.joblib`, `stroke_scaler.joblib`, `stroke_encoder.joblib`, and the three `*_cluster_model.joblib` files.  
+- **Research / optional**: adversarial bundles (`*_adv_trained_bundle.joblib`), `adversarial_examples.joblib`, `clinical_constraints.json`, `vulnerability_report.json`, `defence_report.json`, `sec5_report.json`, SHAP and section-specific PNG exports.
 
 ## Requirements
 
-### Backend
-
-- Python 3.10+ recommended
-- `pip`
-- virtual environment support
-
-### Frontend
-
-- Node.js **20.9+** recommended
-- `npm`
-
-The frontend currently uses **Next.js 16**, so Node 18 may cause local development issues.
+- **Backend**: Python **3.10+** (the repo is commonly used with **3.12**), `pip`, virtualenv.  
+- **Frontend**: **Node.js 20.9+** recommended; the app targets **Next.js 16** (older Node majors may fail locally).
 
 ## Installation
 
@@ -191,28 +138,22 @@ git clone https://github.com/KarikariSamuelZachary/xai-health-risk-system.git
 cd xai-health-risk-system
 ```
 
-### 2. Set up the backend
+### 2. Backend
 
 ```bash
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-On Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-### 3. Set up the frontend
+### 3. Frontend
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 4. Configure the frontend API URL
+### 4. Frontend API URL
 
 Create `frontend/.env.local`:
 
@@ -220,66 +161,44 @@ Create `frontend/.env.local`:
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-The app also includes a fallback to `http://localhost:8000` in the frontend code, but a local env file is still recommended.
+The client may fall back to `http://localhost:8000`, but an explicit env file is recommended.
 
-## Running The Application
+## Running the application
 
-Run the backend and frontend in separate terminals.
+Use two terminals.
 
-### Backend
-
-From the project root:
+**Backend** (from repository root):
 
 ```bash
 uvicorn src.main:app --reload
 ```
 
-Backend URLs:
+- API: `http://localhost:8000`  
+- OpenAPI: `http://localhost:8000/docs`
 
-- API: `http://localhost:8000`
-- Swagger docs: `http://localhost:8000/docs`
-
-### Frontend
-
-From the `frontend/` directory:
+**Frontend** (from `frontend/`):
 
 ```bash
 npm run dev
 ```
 
-Frontend URL:
+- UI: `http://localhost:3000`
 
-- App: `http://localhost:3000`
-
-## API Endpoints
+## API endpoints
 
 | Endpoint | Method | Description |
-|---|---|---|
+|----------|--------|-------------|
 | `/` | GET | Health check |
 | `/assess/diabetes` | POST | Diabetes assessment |
 | `/assess/heart` | POST | Heart disease assessment |
 | `/assess/stroke` | POST | Stroke assessment |
-| `/assess/unified` | POST | Combined multi-condition assessment |
+| `/assess/unified` | POST | Multi-condition assessment; returns only models with complete inputs |
 
-## Unified Input Notes
+## Unified input notes
 
-The unified endpoint accepts shared fields plus condition-specific fields.
+Shared fields typically include **Age**, **BMI**, **gender**, and **Glucose**. The backend maps them into each model’s expected names (e.g. `gender` → `sex` for heart, `Glucose` → `avg_glucose_level` for stroke). Condition-specific columns must still be supplied for each model you want evaluated; see `src/schemas/unified_schema.py` for the full unified payload.
 
-Shared fields include:
-
-- `Age`
-- `BMI`
-- `gender`
-- `Glucose`
-
-Additional mappings performed by the backend:
-
-- `gender` -> `sex` for heart disease
-- `Glucose` -> `avg_glucose_level` for stroke
-- `Age` -> `age` for stroke
-- `BMI` -> `bmi` for stroke
-
-## Example Unified Request
+Example (trim fields as needed for your scenario):
 
 ```json
 {
@@ -311,9 +230,9 @@ Additional mappings performed by the backend:
 }
 ```
 
-## Training And Local Model Utilities
+## Training and CLI utilities
 
-To retrain models from the backend code:
+Retrain serialized artefacts from Python modules:
 
 ```bash
 python -m src.models.diabetes_model_training
@@ -321,46 +240,23 @@ python -m src.models.heart_disease_model
 python -m src.models.stroke_model
 ```
 
-To run the backend CLI test flow:
+Example unified call via CLI:
 
 ```bash
 python -m src.cli.unified_risk_test
 ```
 
-## Frontend Notes
+## Technologies
 
-- The unified dashboard consumes structured responses for all three conditions.
-- The standalone pages also expect:
-  - `risk_score`
-  - `patient_profile`
-  - `explanations`
-- `NEXT_PUBLIC_API_URL` is used to point the frontend at the backend API.
+**Backend:** FastAPI, Uvicorn, Pydantic, NumPy, Pandas, scikit-learn, imbalanced-learn, SHAP, Joblib, **Adversarial Robustness Toolbox**, **statsmodels** (notebooks / analysis), Matplotlib and Seaborn (notebooks).
 
-## Technologies Used
+**Frontend:** Next.js 16, React 18, TypeScript, Tailwind CSS, Axios, Lucide React.
 
-### Backend
-
-- FastAPI
-- Uvicorn
-- Pydantic
-- Pandas
-- NumPy
-- scikit-learn
-- imbalanced-learn
-- SHAP
-- Joblib
-
-### Frontend
-
-- Next.js
-- React
-- Tailwind CSS
-- Axios
+**Tooling:** `pytest` and `pytest-cov` are listed in `requirements.txt` for optional test development.
 
 ## Deployment
 
-- Frontend: Vercel
-- Backend: Render
+Typical setup: frontend on **Vercel**, backend on **Render** (adjust CORS in `src/main.py` if you add new production origins).
 
 ## License
 
