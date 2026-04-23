@@ -88,7 +88,7 @@ These cluster models produce the `patient_profile` value returned by the API.
 ## Key Features
 
 - **Unified shared-field workflow**
-  - Shared inputs such as `Age`, `BMI`, `gender`, and `Glucose` are entered once and mapped into the relevant model formats.
+  - Shared inputs such as `Age`, `BMI`, `gender` and `Glucose` are entered once and mapped into the relevant model formats.
 - **Cluster-aware explanations**
   - Each condition returns both a predicted risk score and a cluster-derived patient profile.
 - **SHAP natural-language summaries**
