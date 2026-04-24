@@ -23,16 +23,16 @@ There are two main tracks in this repo.
 
 **Application track**
 
-- FastAPI API in [src/main.py](/home/iaminspiredbro/my_projects/xai-health-risk-system/src/main.py)
-- Disease-specific predictors and explanation services in [src/](/home/iaminspiredbro/my_projects/xai-health-risk-system/src)
-- Next.js frontend in [frontend/](/home/iaminspiredbro/my_projects/xai-health-risk-system/frontend)
-- Serialized serving artifacts in [output/](/home/iaminspiredbro/my_projects/xai-health-risk-system/output)
+- FastAPI API in [src/main.py](src/main.py)
+- Disease-specific predictors and explanation services in [src/](src)
+- Next.js frontend in [frontend/](frontend)
+- Serialized serving artifacts in [output/](output)
 
 **Research track**
 
-- Data cleaning, EDA, model training, clustering, attack analysis, constrained attacks, defence evaluation and explanation-evasion notebooks in [notebooks/](/home/iaminspiredbro/my_projects/xai-health-risk-system/notebooks)
+- Data cleaning, EDA, model training, clustering, attack analysis, constrained attacks, defence evaluation and explanation-evasion notebooks in [notebooks/](notebooks)
 
-If you only want to run the app, you do not need to execute the notebooks first as long as the required artifacts already exist in [output/](/home/iaminspiredbro/my_projects/xai-health-risk-system/output).
+If you only want to run the app, you do not need to execute the notebooks first as long as the required artifacts already exist in [output/](output).
 
 ## Project Goal
 
@@ -137,11 +137,11 @@ The notebooks are organized roughly as a paper/report workflow:
 
 Important research outputs include:
 
-- [output/adversarial_examples.joblib](/home/iaminspiredbro/my_projects/xai-health-risk-system/output/adversarial_examples.joblib)
-- [output/clinical_constraints.json](/home/iaminspiredbro/my_projects/xai-health-risk-system/output/clinical_constraints.json)
-- [output/vulnerability_report.json](/home/iaminspiredbro/my_projects/xai-health-risk-system/output/vulnerability_report.json)
-- [output/defence_report.json](/home/iaminspiredbro/my_projects/xai-health-risk-system/output/defence_report.json)
-- [output/sec5_report.json](/home/iaminspiredbro/my_projects/xai-health-risk-system/output/sec5_report.json)
+- [output/adversarial_examples.joblib](output/adversarial_examples.joblib)
+- [output/clinical_constraints.json](output/clinical_constraints.json)
+- [output/vulnerability_report.json](output/vulnerability_report.json)
+- [output/defence_report.json](output/defence_report.json)
+- [output/sec5_report.json](output/sec5_report.json)
 
 ## Core Artifacts In `output/`
 
@@ -233,7 +233,7 @@ Available at:
 
 ### Frontend
 
-From [frontend/](/home/iaminspiredbro/my_projects/xai-health-risk-system/frontend):
+From [frontend/](frontend):
 
 ```bash
 npm run dev
@@ -256,7 +256,7 @@ Shared fields include:
 
 These are mapped into each model where applicable. Disease-specific fields are still required if you want that specific model to run.
 
-See [src/schemas/unified_schema.py](/home/iaminspiredbro/my_projects/xai-health-risk-system/src/schemas/unified_schema.py) for the full request schema and example payload.
+See [src/schemas/unified_schema.py](src/schemas/unified_schema.py) for the full request schema and example payload.
 
 ## Training Utilities
 
@@ -310,12 +310,12 @@ The project is structured for a split deployment:
 - Frontend on Vercel
 - Backend on a Python host such as Render
 
-If you deploy to new origins, update the CORS settings in [src/main.py](/home/iaminspiredbro/my_projects/xai-health-risk-system/src/main.py).
+If you deploy to new origins, update the CORS settings in [src/main.py](src/main.py).
 
 ## Contributing
 
-See [CONTRIBUTING.md](/home/iaminspiredbro/my_projects/xai-health-risk-system/CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-This project is licensed under the terms in [LICENSE](/home/iaminspiredbro/my_projects/xai-health-risk-system/LICENSE).
+This project is licensed under the terms in [LICENSE](LICENSE).
