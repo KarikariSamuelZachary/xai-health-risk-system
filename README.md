@@ -3,7 +3,7 @@
 This project combines two things:
 
 1. A deployable health-risk application with a FastAPI backend and Next.js frontend.
-2. A research notebook pipeline that studies adversarial robustness, clinical constraints, defences, and explanation stability.
+2. A research notebook pipeline that studies adversarial robustness, clinical constraints, defences and explanation stability.
 
 The system assesses risk for three conditions:
 
@@ -30,7 +30,7 @@ There are two main tracks in this repo.
 
 **Research track**
 
-- Data cleaning, EDA, model training, clustering, attack analysis, constrained attacks, defence evaluation, and explanation-evasion notebooks in [notebooks/](/home/iaminspiredbro/my_projects/xai-health-risk-system/notebooks)
+- Data cleaning, EDA, model training, clustering, attack analysis, constrained attacks, defence evaluation and explanation-evasion notebooks in [notebooks/](/home/iaminspiredbro/my_projects/xai-health-risk-system/notebooks)
 
 If you only want to run the app, you do not need to execute the notebooks first as long as the required artifacts already exist in [output/](/home/iaminspiredbro/my_projects/xai-health-risk-system/output).
 
@@ -159,7 +159,7 @@ These files matter for serving:
 - `heart_cluster_model.joblib`
 - `stroke_cluster_model.joblib`
 
-Other files in `output/` are mostly research reports, figures, and defence artifacts.
+Other files in `output/` are mostly research reports, figures and defence artifacts.
 
 ## Requirements
 
